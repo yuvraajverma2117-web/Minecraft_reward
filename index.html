@@ -3,774 +3,613 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Minecraft Reward System</title>
+<title>MC Reward System</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    background: #0a0a0a;
-    color: #fff;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-
-  h1 {
-    font-size: 1.8em;
-    color: #4cff4c;
-    text-align: center;
-    margin-bottom: 6px;
-  }
-
-  .subtitle {
-    color: #666;
-    font-size: 0.9em;
-    text-align: center;
-    margin-bottom: 24px;
-  }
-
-  /* NAV TABS */
-  .tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
-  }
-
-  .tab {
-    padding: 10px 20px;
-    border-radius: 30px;
-    border: 2px solid #2a2a2a;
-    background: #111;
-    color: #888;
-    cursor: pointer;
-    font-size: 0.95em;
-    transition: all 0.2s;
-  }
-
-  .tab.active {
-    border-color: #4cff4c;
-    color: #4cff4c;
-    background: #0a1a0a;
-  }
-
-  /* CARD */
-  .card {
-    background: #111;
-    border: 1px solid #222;
-    border-radius: 16px;
-    padding: 28px;
-    width: 100%;
-    max-width: 480px;
-  }
-
-  /* PAGES */
-  .page { display: none; }
-  .page.active { display: block; }
-
-  /* PROGRESS BAR */
-  .progress-wrap {
-    background: #1a1a1a;
-    border-radius: 10px;
-    height: 10px;
-    margin-bottom: 20px;
-    overflow: hidden;
-  }
-
-  .progress-bar {
-    height: 100%;
-    background: #4cff4c;
-    border-radius: 10px;
-    transition: width 0.4s ease;
-  }
-
-  .progress-label {
-    font-size: 0.8em;
-    color: #555;
-    margin-bottom: 8px;
-  }
-
-  /* QUESTION CARD */
-  .question-box {
-    background: #0d1a0d;
-    border: 1px solid #1a3a1a;
-    border-radius: 12px;
-    padding: 24px;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-
-  .question-category {
-    font-size: 0.75em;
-    color: #4cff4c;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 10px;
-  }
-
-  .question-text {
-    font-size: 1.3em;
-    color: #fff;
-    line-height: 1.4;
-  }
-
-  .question-num {
-    font-size: 0.8em;
-    color: #444;
-    margin-top: 8px;
-  }
-
-  /* BUTTONS */
-  .btn-row {
-    display: flex;
-    gap: 12px;
-    margin-top: 8px;
-  }
-
-  .btn {
-    flex: 1;
-    padding: 16px;
-    border-radius: 12px;
-    border: none;
-    font-size: 1em;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .btn:active { transform: scale(0.97); }
-
-  .btn-yes {
-    background: #1a4a1a;
-    color: #4cff4c;
-    border: 2px solid #2d8f2d;
-  }
-
-  .btn-yes:hover { background: #2d8f2d; }
-
-  .btn-no {
-    background: #3a1a1a;
-    color: #ff6666;
-    border: 2px solid #8f2d2d;
-  }
-
-  .btn-no:hover { background: #8f2d2d; }
-
-  .btn-green {
-    background: #2d8f2d;
-    color: #fff;
-    border: none;
-    width: 100%;
-    margin-top: 12px;
-  }
-
-  .btn-green:hover { background: #3aaa3a; }
-
-  .btn-red {
-    background: #8f2d2d;
-    color: #fff;
-    border: none;
-    width: 100%;
-    margin-top: 8px;
-  }
-
-  /* RESULT SCREEN */
-  .result-icon {
-    font-size: 4em;
-    text-align: center;
-    margin-bottom: 12px;
-  }
-
-  .result-title {
-    font-size: 1.5em;
-    text-align: center;
-    color: #4cff4c;
-    margin-bottom: 8px;
-  }
-
-  .result-sub {
-    text-align: center;
-    color: #888;
-    margin-bottom: 20px;
-  }
-
-  /* SCORE PILLS */
-  .score-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
-    margin-bottom: 20px;
-  }
-
-  .score-pill {
-    border-radius: 8px;
-    padding: 10px 4px;
-    text-align: center;
-    font-size: 0.75em;
-    background: #1a1a1a;
-    color: #555;
-    border: 1px solid #222;
-  }
-
-  .score-pill.yes { background: #0d2a0d; color: #4cff4c; border-color: #2d8f2d; }
-  .score-pill.no  { background: #2a0d0d; color: #ff6666; border-color: #8f2d2d; }
-
-  /* COUNTDOWN */
-  .countdown-display {
-    background: #0d1a0d;
-    border: 2px solid #2d8f2d;
-    border-radius: 16px;
-    padding: 32px;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-
-  .countdown-time {
-    font-size: 4em;
-    font-weight: bold;
-    color: #4cff4c;
-    font-family: monospace;
-    letter-spacing: 4px;
-  }
-
-  .countdown-label {
-    color: #888;
-    margin-top: 8px;
-    font-size: 0.9em;
-  }
-
-  .btn-stop {
-    background: #8f2d2d;
-    color: #fff;
-    border: none;
-    width: 100%;
-    padding: 14px;
-    border-radius: 12px;
-    font-size: 1em;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 8px;
-  }
-
-  /* STATS */
-  .stat-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 0;
-    border-bottom: 1px solid #1a1a1a;
-  }
-
-  .stat-label { color: #888; font-size: 0.95em; }
-  .stat-value { color: #4cff4c; font-size: 1.1em; font-weight: bold; }
-
-  /* FREE TIMER */
-  .timer-big {
-    font-size: 5em;
-    font-weight: bold;
-    color: #4cff4c;
-    font-family: monospace;
-    text-align: center;
-    margin: 20px 0;
-  }
-
-  .slider-wrap {
-    margin: 16px 0;
-  }
-
-  .slider-wrap label {
-    color: #888;
-    font-size: 0.85em;
-    display: block;
-    margin-bottom: 8px;
-  }
-
-  input[type=range] {
-    width: 100%;
-    accent-color: #4cff4c;
-  }
-
-  /* SESSION PROGRESS DOTS */
-  .session-dots {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-
-  .dot {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #1a1a1a;
-    border: 2px solid #333;
-    transition: all 0.3s;
-  }
-
-  .dot.done { background: #4cff4c; border-color: #4cff4c; }
-  .dot.current { background: #1a3a1a; border-color: #4cff4c; }
-
-  /* FLASH OVERLAY */
-  .flash {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: #000;
-    z-index: 100;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-    text-align: center;
-    padding: 40px;
-  }
-
-  .flash.show { opacity: 1; pointer-events: all; }
-  .flash-icon { font-size: 5em; margin-bottom: 16px; }
-  .flash-title { font-size: 2em; color: #4cff4c; margin-bottom: 10px; }
-  .flash-sub { color: #888; font-size: 1.1em; }
-
-  /* EARNED BANNER */
-  .earned-banner {
-    background: #0d2a0d;
-    border: 1px solid #2d8f2d;
-    border-radius: 10px;
-    padding: 12px 16px;
-    text-align: center;
-    margin-bottom: 16px;
-    color: #4cff4c;
-    font-size: 0.95em;
-  }
-
-  .section-title {
-    font-size: 1.1em;
-    color: #4cff4c;
-    margin-bottom: 16px;
-    font-weight: bold;
-  }
+:root {
+  --green:#00ff41;--green-dim:#00c032;--green-dark:#003a0e;
+  --green-glow:rgba(0,255,65,0.15);--red:#ff3333;--red-dim:#cc0000;
+  --gold:#ffd700;--bg:#060a06;--bg2:#0a100a;--bg3:#0f180f;
+  --border:rgba(0,255,65,0.18);--border-bright:rgba(0,255,65,0.5);
+  --text:#c8ffc8;--text-dim:#4a7a4a;
+  --font-pixel:'Press Start 2P',monospace;
+  --font-main:'Rajdhani',sans-serif;
+  --font-hud:'Orbitron',sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--font-main);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;cursor:none;}
+#cursor{position:fixed;width:20px;height:20px;border:2px solid var(--green);border-radius:2px;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform 0.05s,border-color 0.2s;mix-blend-mode:screen;}
+#cursor::after{content:'';position:absolute;inset:3px;background:var(--green);opacity:0.4;border-radius:1px;}
+#cursor.clicking{transform:translate(-50%,-50%) scale(0.7);border-color:var(--gold);}
+#matrix-canvas{position:fixed;inset:0;z-index:0;opacity:0.06;pointer-events:none;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);pointer-events:none;z-index:9998;}
+#app{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 16px 40px;}
+header{width:100%;max-width:600px;text-align:center;padding:32px 0 20px;}
+.logo-pixel{font-family:var(--font-pixel);font-size:clamp(10px,3vw,16px);color:var(--green);line-height:2;text-shadow:0 0 10px var(--green),0 0 30px rgba(0,255,65,0.4),0 0 60px rgba(0,255,65,0.2);animation:pulse-glow 3s ease-in-out infinite;letter-spacing:2px;}
+@keyframes pulse-glow{0%,100%{text-shadow:0 0 10px var(--green),0 0 30px rgba(0,255,65,0.4);}50%{text-shadow:0 0 20px var(--green),0 0 60px rgba(0,255,65,0.6),0 0 100px rgba(0,255,65,0.3);}}
+.tagline{font-family:var(--font-hud);font-size:0.7em;color:var(--text-dim);letter-spacing:4px;text-transform:uppercase;margin-top:8px;}
+.hud-bar{width:100%;max-width:600px;display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;margin-bottom:16px;font-family:var(--font-hud);font-size:0.65em;color:var(--text-dim);letter-spacing:1px;}
+.hud-item{display:flex;flex-direction:column;align-items:center;gap:2px;}
+.hud-val{color:var(--green);font-size:1.3em;font-weight:700;}
+.hud-label{font-size:0.7em;opacity:0.6;}
+.tabs{width:100%;max-width:600px;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:16px;}
+.tab{padding:10px 4px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text-dim);cursor:none;font-family:var(--font-hud);font-size:0.6em;letter-spacing:1px;text-align:center;transition:all 0.2s;text-transform:uppercase;position:relative;overflow:hidden;}
+.tab::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--green);transform:scaleX(0);transition:transform 0.3s;}
+.tab:hover{color:var(--text);border-color:var(--border-bright);}
+.tab.active{color:var(--green);border-color:var(--green);background:var(--green-dark);box-shadow:0 0 20px var(--green-glow),inset 0 0 20px rgba(0,255,65,0.05);}
+.tab.active::before{transform:scaleX(1);}
+.card{width:100%;max-width:600px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:24px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--green),transparent);animation:scan-top 4s linear infinite;}
+@keyframes scan-top{0%{opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{opacity:0;}}
+.page{display:none;}
+.page.active{display:block;animation:fade-in 0.3s ease;}
+@keyframes fade-in{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.section-title{font-family:var(--font-hud);font-size:0.75em;color:var(--green);letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.section-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border-bright),transparent);}
+.session-track{display:flex;align-items:center;gap:6px;margin-bottom:20px;}
+.s-dot{flex:1;height:6px;background:var(--bg3);border:1px solid var(--border);border-radius:2px;transition:all 0.4s;}
+.s-dot.done{background:var(--green);border-color:var(--green);box-shadow:0 0 8px var(--green);}
+.s-dot.current{border-color:var(--green);animation:blink-dot 1s ease-in-out infinite;}
+@keyframes blink-dot{0%,100%{box-shadow:0 0 4px var(--green);}50%{box-shadow:0 0 12px var(--green),0 0 20px rgba(0,255,65,0.4);}}
+.earned-banner{background:linear-gradient(135deg,var(--green-dark),rgba(0,58,14,0.5));border:1px solid var(--border-bright);border-radius:6px;padding:12px 16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;font-family:var(--font-hud);font-size:0.7em;}
+.earned-label{color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;}
+.earned-val{color:var(--green);font-size:1.5em;font-weight:900;}
+.start-hero{text-align:center;padding:20px 0;margin-bottom:20px;}
+.start-icon{font-size:4em;display:block;margin-bottom:12px;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+.start-tagline{font-family:var(--font-pixel);font-size:8px;color:var(--text-dim);line-height:2.5;letter-spacing:1px;}
+.combo-counter{font-family:var(--font-hud);font-size:0.65em;color:var(--text-dim);text-align:center;margin-top:8px;letter-spacing:2px;}
+.combo-counter span{color:var(--gold);font-weight:700;}
+.q-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-family:var(--font-hud);font-size:0.65em;color:var(--text-dim);letter-spacing:2px;}
+.q-timer-pill{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:4px 12px;color:var(--green);font-weight:700;transition:color 0.3s;}
+.q-timer-pill.urgent{color:var(--red);border-color:var(--red);animation:blink-urgent 0.5s step-start infinite;}
+@keyframes blink-urgent{50%{opacity:0.3;}}
+.progress-track{height:4px;background:var(--bg3);border-radius:2px;margin-bottom:20px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--green-dim),var(--green));border-radius:2px;transition:width 0.5s cubic-bezier(0.4,0,0.2,1);box-shadow:0 0 10px var(--green);}
+.question-box{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:24px 20px;margin-bottom:20px;position:relative;overflow:hidden;min-height:140px;display:flex;flex-direction:column;justify-content:center;}
+.q-cat-tag{font-family:var(--font-hud);font-size:0.6em;color:var(--green);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;opacity:0.8;}
+.q-text{font-family:var(--font-main);font-size:1.4em;font-weight:700;color:#fff;line-height:1.4;letter-spacing:0.5px;}
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.btn{padding:18px;border-radius:6px;border:2px solid;font-family:var(--font-hud);font-size:0.85em;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:none;transition:all 0.15s;position:relative;overflow:hidden;}
+.btn:active{transform:scale(0.97);}
+.btn-yes{background:rgba(0,255,65,0.08);border-color:var(--green);color:var(--green);}
+.btn-yes:hover{background:rgba(0,255,65,0.15);box-shadow:0 0 20px rgba(0,255,65,0.3);}
+.btn-no{background:rgba(255,51,51,0.08);border-color:var(--red);color:var(--red);}
+.btn-no:hover{background:rgba(255,51,51,0.15);box-shadow:0 0 20px rgba(255,51,51,0.3);}
+.btn-primary{width:100%;padding:18px;background:var(--green);border:none;border-radius:6px;color:#000;font-family:var(--font-hud);font-size:0.85em;font-weight:700;letter-spacing:3px;text-transform:uppercase;cursor:none;transition:all 0.2s;margin-top:12px;}
+.btn-primary:hover{background:#00ff80;box-shadow:0 0 30px rgba(0,255,65,0.5);transform:translateY(-1px);}
+.btn-primary:active{transform:translateY(1px);}
+.btn-danger{width:100%;padding:14px;background:transparent;border:1px solid rgba(255,51,51,0.3);border-radius:6px;color:rgba(255,51,51,0.6);font-family:var(--font-hud);font-size:0.7em;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:none;transition:all 0.2s;margin-top:8px;}
+.btn-danger:hover{border-color:var(--red);color:var(--red);background:rgba(255,51,51,0.05);}
+.result-hero{text-align:center;padding:20px 0 24px;}
+.result-emoji{font-size:5em;display:block;margin-bottom:12px;animation:pop-in 0.4s cubic-bezier(0.34,1.56,0.64,1);}
+@keyframes pop-in{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+.result-title{font-family:var(--font-pixel);font-size:clamp(9px,2.5vw,14px);color:var(--green);text-shadow:0 0 20px var(--green);margin-bottom:8px;line-height:2;}
+.result-sub{font-family:var(--font-hud);color:var(--text-dim);font-size:0.85em;letter-spacing:2px;}
+.score-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:20px 0;}
+.score-pill{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:12px 4px;text-align:center;font-family:var(--font-hud);font-size:0.6em;letter-spacing:1px;}
+.score-pill.yes{background:rgba(0,255,65,0.08);border-color:var(--green);color:var(--green);box-shadow:0 0 10px rgba(0,255,65,0.15);}
+.score-pill.no{background:rgba(255,51,51,0.08);border-color:var(--red);color:var(--red);}
+.score-pill .pill-icon{font-size:1.6em;display:block;margin-bottom:4px;}
+.score-pill .pill-label{display:block;opacity:0.7;}
+.time-earned-box{background:linear-gradient(135deg,rgba(0,255,65,0.08),rgba(0,255,65,0.03));border:1px solid var(--green);border-radius:8px;padding:20px;text-align:center;margin-bottom:16px;box-shadow:0 0 30px rgba(0,255,65,0.1);}
+.time-earned-num{font-family:var(--font-pixel);font-size:clamp(12px,4vw,22px);color:var(--green);text-shadow:0 0 20px var(--green);display:block;margin-bottom:6px;}
+.time-earned-label{font-family:var(--font-hud);font-size:0.65em;color:var(--text-dim);letter-spacing:3px;text-transform:uppercase;}
+.countdown-wrap{text-align:center;padding:20px 0;}
+.countdown-ring{position:relative;width:200px;height:200px;margin:0 auto 24px;}
+.countdown-ring svg{transform:rotate(-90deg);width:200px;height:200px;}
+.countdown-ring circle{fill:none;stroke-width:4;stroke-linecap:round;}
+.ring-bg{stroke:var(--bg3);}
+.ring-fill{stroke:var(--green);filter:drop-shadow(0 0 8px var(--green));transition:stroke-dashoffset 1s linear;}
+.countdown-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.countdown-time-big{font-family:var(--font-pixel);font-size:clamp(16px,5vw,24px);color:var(--green);text-shadow:0 0 20px var(--green);line-height:1.8;}
+.countdown-time-label{font-family:var(--font-hud);font-size:0.55em;color:var(--text-dim);letter-spacing:3px;text-transform:uppercase;margin-top:4px;}
+.mc-banner{font-family:var(--font-pixel);font-size:8px;color:var(--gold);text-align:center;line-height:2.5;text-shadow:0 0 10px var(--gold);margin-bottom:20px;animation:pulse-gold 2s ease-in-out infinite;}
+@keyframes pulse-gold{0%,100%{text-shadow:0 0 10px var(--gold);}50%{text-shadow:0 0 20px var(--gold),0 0 40px rgba(255,215,0,0.4);}}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;transition:border-color 0.2s;}
+.stat-card:hover{border-color:var(--border-bright);}
+.stat-card-icon{font-size:1.8em;display:block;margin-bottom:8px;}
+.stat-card-val{font-family:var(--font-hud);font-size:1.4em;font-weight:900;color:var(--green);display:block;margin-bottom:4px;}
+.stat-card-label{font-family:var(--font-hud);font-size:0.6em;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;}
+.achievement{display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;margin-bottom:8px;transition:all 0.2s;opacity:0.4;}
+.achievement.unlocked{opacity:1;border-color:var(--gold);background:rgba(255,215,0,0.05);}
+.ach-icon{font-size:1.6em;flex-shrink:0;}
+.ach-info{flex:1;}
+.ach-name{font-family:var(--font-hud);font-size:0.8em;font-weight:700;color:var(--text);letter-spacing:1px;}
+.ach-desc{font-family:var(--font-hud);font-size:0.65em;color:var(--text-dim);letter-spacing:1px;margin-top:2px;}
+.ach-badge{font-family:var(--font-hud);font-size:0.6em;color:var(--gold);letter-spacing:1px;}
+.timer-display-big{font-family:var(--font-pixel);font-size:clamp(18px,7vw,36px);color:var(--green);text-align:center;text-shadow:0 0 30px var(--green),0 0 60px rgba(0,255,65,0.3);line-height:2;margin:20px 0;letter-spacing:4px;}
+.slider-row{margin-bottom:20px;}
+.slider-label{display:flex;justify-content:space-between;font-family:var(--font-hud);font-size:0.7em;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
+.slider-val{color:var(--green);font-weight:700;}
+input[type=range]{width:100%;-webkit-appearance:none;height:4px;background:var(--bg3);border-radius:2px;outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--green);border-radius:2px;cursor:none;box-shadow:0 0 10px var(--green);}
+.history-list{max-height:360px;overflow-y:auto;}
+.history-list::-webkit-scrollbar{width:4px;}
+.history-list::-webkit-scrollbar-track{background:var(--bg3);}
+.history-list::-webkit-scrollbar-thumb{background:var(--border-bright);border-radius:2px;}
+.history-item{display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid var(--border);transition:background 0.15s;}
+.history-item:hover{background:rgba(0,255,65,0.03);}
+.history-score{width:40px;height:40px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--font-hud);font-size:0.9em;font-weight:900;flex-shrink:0;}
+.sc5{background:rgba(0,255,65,0.15);color:var(--green);border:1px solid var(--green);}
+.sc4{background:rgba(0,200,50,0.1);color:#00c832;border:1px solid #00c832;}
+.sc3{background:rgba(255,215,0,0.1);color:var(--gold);border:1px solid var(--gold);}
+.sc2{background:rgba(255,140,0,0.1);color:#ff8c00;border:1px solid #ff8c00;}
+.sc1,.sc0{background:rgba(255,51,51,0.1);color:var(--red);border:1px solid var(--red);}
+.history-info{flex:1;}
+.history-time-earned{font-family:var(--font-hud);font-size:0.85em;font-weight:700;color:var(--text);letter-spacing:1px;}
+.history-date{font-family:var(--font-hud);font-size:0.6em;color:var(--text-dim);letter-spacing:1px;margin-top:2px;}
+.history-dots{display:flex;gap:3px;}
+.h-dot{width:8px;height:8px;border-radius:2px;background:var(--bg3);}
+.h-dot.y{background:var(--green);}
+.h-dot.n{background:var(--red);}
+.empty-state{text-align:center;padding:40px 20px;font-family:var(--font-hud);font-size:0.75em;color:var(--text-dim);letter-spacing:2px;}
+#toast-container{position:fixed;top:20px;right:20px;z-index:9990;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.toast{background:var(--bg2);border:1px solid var(--border-bright);border-left:3px solid var(--green);border-radius:6px;padding:12px 16px;font-family:var(--font-hud);font-size:0.7em;letter-spacing:1px;color:var(--text);box-shadow:0 4px 20px rgba(0,0,0,0.5);animation:slide-in 0.3s ease,fade-out 0.3s ease 2.7s forwards;max-width:260px;}
+.toast.danger{border-left-color:var(--red);}
+.toast.gold{border-left-color:var(--gold);}
+@keyframes slide-in{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+@keyframes fade-out{to{opacity:0;transform:translateX(20px);}}
+#flash{position:fixed;inset:0;background:rgba(0,0,0,0.92);backdrop-filter:blur(4px);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9995;opacity:0;pointer-events:none;transition:opacity 0.3s;text-align:center;padding:40px;}
+#flash.show{opacity:1;pointer-events:all;}
+.flash-emoji{font-size:6em;margin-bottom:20px;animation:bounce-in 0.5s cubic-bezier(0.34,1.56,0.64,1);}
+@keyframes bounce-in{from{transform:scale(0) rotate(-10deg);}to{transform:scale(1) rotate(0deg);}}
+.flash-title{font-family:var(--font-pixel);font-size:clamp(10px,3vw,18px);color:var(--green);text-shadow:0 0 30px var(--green);line-height:2;margin-bottom:12px;}
+.flash-sub{font-family:var(--font-hud);font-size:0.9em;color:var(--text-dim);letter-spacing:2px;max-width:300px;}
+.particle{position:fixed;pointer-events:none;z-index:9994;font-size:1.2em;animation:particle-fly 1s ease-out forwards;}
+@keyframes particle-fly{from{transform:translate(0,0) scale(1);opacity:1;}to{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0;}}
+@media(max-width:400px){.tabs{grid-template-columns:repeat(2,1fr);}.stats-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
-
-<h1>🎮 Minecraft Reward</h1>
-<p class="subtitle">Complete homework honestly to earn playtime</p>
-
-<!-- TABS -->
-<div class="tabs">
-  <div class="tab active" onclick="switchTab('homework')">📚 Homework</div>
-  <div class="tab" onclick="switchTab('stats')">📊 Stats</div>
-  <div class="tab" onclick="switchTab('timer')">⏱ Timer</div>
+<canvas id="matrix-canvas"></canvas>
+<div id="cursor"></div>
+<div id="toast-container"></div>
+<div id="flash">
+  <div class="flash-emoji" id="flash-emoji">🎉</div>
+  <div class="flash-title" id="flash-title"></div>
+  <div class="flash-sub" id="flash-sub"></div>
 </div>
 
-<!-- MAIN CARD -->
-<div class="card">
+<div id="app">
+  <header>
+    <div class="logo-pixel">⛏ MC REWARD SYSTEM</div>
+    <div class="tagline">Earn playtime through honesty</div>
+  </header>
 
-  <!-- ==================== HOMEWORK PAGE ==================== -->
-  <div class="page active" id="page-homework">
+  <div class="hud-bar">
+    <div class="hud-item"><span class="hud-val" id="hud-sessions">0</span><span class="hud-label">CYCLE</span></div>
+    <div class="hud-item"><span class="hud-val" id="hud-earned">0:00</span><span class="hud-label">EARNED</span></div>
+    <div class="hud-item"><span class="hud-val" id="hud-streak">0</span><span class="hud-label">STREAK</span></div>
+    <div class="hud-item"><span class="hud-val" id="hud-total">0</span><span class="hud-label">ALL TIME</span></div>
+  </div>
 
-    <!-- START SCREEN -->
-    <div id="screen-start">
-      <div class="section-title">Session Progress</div>
-      <div class="session-dots" id="session-dots"></div>
-      <div class="earned-banner" id="earned-banner">⏱ Earned this cycle: <b id="cycle-earned-display">0m 0s</b></div>
-      <div class="question-box" style="margin-bottom:20px">
-        <div class="question-category">Ready to begin?</div>
-        <div class="question-text">Answer 5 honest questions to earn Minecraft time</div>
-        <div class="question-num">100,000 possible question combinations</div>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('homework',this)">📚 QUIZ</div>
+    <div class="tab" onclick="switchTab('stats',this)">📊 STATS</div>
+    <div class="tab" onclick="switchTab('timer',this)">⏱ TIMER</div>
+    <div class="tab" onclick="switchTab('history',this)">📜 LOG</div>
+  </div>
+
+  <div class="card">
+
+    <!-- HOMEWORK PAGE -->
+    <div class="page active" id="page-homework">
+      <div id="screen-start">
+        <div class="section-title">Session Progress</div>
+        <div class="session-track" id="session-track"></div>
+        <div class="earned-banner">
+          <span class="earned-label">⚡ Cycle Earned</span>
+          <span class="earned-val" id="cycle-display">0:00</span>
+        </div>
+        <div class="start-hero">
+          <span class="start-icon">⛏</span>
+          <div class="start-tagline">ANSWER 5 QUESTIONS<br>EARN MINECRAFT TIME</div>
+          <div class="combo-counter"><span>100,000</span> possible combinations</div>
+        </div>
+        <button class="btn-primary" onclick="startQuiz()">▶ START QUIZ</button>
       </div>
-      <button class="btn btn-green" onclick="startQuiz()">Start Quiz ▶</button>
+
+      <div id="screen-quiz" style="display:none">
+        <div class="q-header">
+          <span id="q-num-label">QUESTION 1/5</span>
+          <div class="q-timer-pill" id="q-timer">20</div>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+        <div class="question-box">
+          <div class="q-cat-tag" id="q-cat">Category</div>
+          <div class="q-text" id="q-text">Loading...</div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-yes" onclick="answer(true)">✅ YES</button>
+          <button class="btn btn-no" onclick="answer(false)">❌ NO</button>
+        </div>
+      </div>
+
+      <div id="screen-result" style="display:none">
+        <div class="result-hero">
+          <span class="result-emoji" id="result-emoji">🎉</span>
+          <div class="result-title" id="result-title">PERFECT!</div>
+          <div class="result-sub" id="result-sub">Amazing work</div>
+        </div>
+        <div class="score-grid" id="score-grid"></div>
+        <div class="time-earned-box">
+          <span class="time-earned-num" id="earned-num">+2:00</span>
+          <span class="time-earned-label">Minutes Earned This Session</span>
+        </div>
+        <button class="btn-primary" id="next-btn" onclick="afterResult()">CONTINUE ▶</button>
+      </div>
+
+      <div id="screen-countdown" style="display:none">
+        <div class="mc-banner">🎮 MINECRAFT TIME! 🎮</div>
+        <div class="countdown-wrap">
+          <div class="countdown-ring">
+            <svg viewBox="0 0 200 200">
+              <circle class="ring-bg" cx="100" cy="100" r="90" stroke-dasharray="565" stroke-dashoffset="0"/>
+              <circle class="ring-fill" id="ring-fill" cx="100" cy="100" r="90" stroke-dasharray="565" stroke-dashoffset="0"/>
+            </svg>
+            <div class="countdown-inner">
+              <div class="countdown-time-big" id="cd-time">00:00</div>
+              <div class="countdown-time-label">remaining</div>
+            </div>
+          </div>
+        </div>
+        <button class="btn-danger" onclick="stopCountdown()">⏹ STOP EARLY</button>
+      </div>
     </div>
 
-    <!-- QUIZ SCREEN -->
-    <div id="screen-quiz" style="display:none">
-      <div class="progress-label" id="q-progress">Question 1 of 5</div>
-      <div class="progress-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
-      <div class="question-box">
-        <div class="question-category" id="q-category">Category</div>
-        <div class="question-text" id="q-text">Loading...</div>
-        <div class="question-num" id="q-num">Q1</div>
+    <!-- STATS PAGE -->
+    <div class="page" id="page-stats">
+      <div class="section-title">Statistics</div>
+      <div class="stats-grid">
+        <div class="stat-card"><span class="stat-card-icon">⏱</span><span class="stat-card-val" id="s-total-time">0:00</span><span class="stat-card-label">Total Earned</span></div>
+        <div class="stat-card"><span class="stat-card-icon">📋</span><span class="stat-card-val" id="s-sessions">0</span><span class="stat-card-label">Sessions Done</span></div>
+        <div class="stat-card"><span class="stat-card-icon">⭐</span><span class="stat-card-val" id="s-perfect">0</span><span class="stat-card-label">Perfect 5/5</span></div>
+        <div class="stat-card"><span class="stat-card-icon">📈</span><span class="stat-card-val" id="s-avg">-</span><span class="stat-card-label">Avg Score</span></div>
+        <div class="stat-card"><span class="stat-card-icon">🔥</span><span class="stat-card-val" id="s-streak">0</span><span class="stat-card-label">Best Streak</span></div>
+        <div class="stat-card"><span class="stat-card-icon">🚨</span><span class="stat-card-val" id="s-caught">0</span><span class="stat-card-label">Caught Lying</span></div>
       </div>
-      <div class="btn-row">
-        <button class="btn btn-yes" onclick="answer(true)">✅ Yes</button>
-        <button class="btn btn-no"  onclick="answer(false)">❌ No</button>
+      <div class="section-title">Achievements</div>
+      <div id="achievement-list"></div>
+      <button class="btn-danger" onclick="confirmReset()">🗑 RESET ALL DATA</button>
+    </div>
+
+    <!-- FREE TIMER PAGE -->
+    <div class="page" id="page-timer">
+      <div id="timer-setup-view">
+        <div class="section-title">Free Timer</div>
+        <div class="timer-display-big" id="free-display">05:00</div>
+        <div class="slider-row">
+          <div class="slider-label"><span>Duration</span><span class="slider-val"><span id="free-min-val">5</span> minutes</span></div>
+          <input type="range" min="1" max="90" value="5" id="free-slider" oninput="onFreeSlider(this.value)">
+        </div>
+        <button class="btn-primary" onclick="startFreeTimer()">▶ START FREE TIMER</button>
+      </div>
+      <div id="timer-running-view" style="display:none">
+        <div class="section-title">Timer Running</div>
+        <div class="countdown-wrap">
+          <div class="countdown-ring">
+            <svg viewBox="0 0 200 200">
+              <circle class="ring-bg" cx="100" cy="100" r="90" stroke-dasharray="565" stroke-dashoffset="0"/>
+              <circle class="ring-fill" id="free-ring" cx="100" cy="100" r="90" stroke-dasharray="565" stroke-dashoffset="0"/>
+            </svg>
+            <div class="countdown-inner">
+              <div class="countdown-time-big" id="free-cd-time">00:00</div>
+              <div class="countdown-time-label">free time</div>
+            </div>
+          </div>
+        </div>
+        <button class="btn-danger" onclick="stopFreeTimer()">⏹ STOP</button>
       </div>
     </div>
 
-    <!-- RESULT SCREEN -->
-    <div id="screen-result" style="display:none">
-      <div class="result-icon" id="result-icon">🎉</div>
-      <div class="result-title" id="result-title">Perfect!</div>
-      <div class="result-sub" id="result-sub">+2 minutes earned</div>
-      <div class="score-grid" id="score-grid"></div>
-      <button class="btn btn-green" id="result-next-btn" onclick="afterResult()">Continue ▶</button>
-    </div>
-
-    <!-- COUNTDOWN SCREEN -->
-    <div id="screen-countdown" style="display:none">
-      <div class="result-icon">🎮</div>
-      <div class="result-title">Play Minecraft!</div>
-      <div class="countdown-display">
-        <div class="countdown-time" id="countdown-time">00:00</div>
-        <div class="countdown-label">remaining</div>
-      </div>
-      <button class="btn-stop" onclick="stopCountdown()">⏹ Stop Early</button>
+    <!-- HISTORY PAGE -->
+    <div class="page" id="page-history">
+      <div class="section-title">Session Log</div>
+      <div class="history-list" id="history-list"></div>
     </div>
 
   </div>
-
-  <!-- ==================== STATS PAGE ==================== -->
-  <div class="page" id="page-stats">
-    <div class="section-title">Your Stats</div>
-    <div class="stat-row">
-      <span class="stat-label">Total time earned</span>
-      <span class="stat-value" id="stat-total-time">0m 0s</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-label">Total sessions done</span>
-      <span class="stat-value" id="stat-sessions">0</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-label">Perfect scores (5/5)</span>
-      <span class="stat-value" id="stat-perfect">0</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-label">Times caught lying</span>
-      <span class="stat-value" id="stat-caught">0</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-label">Average score</span>
-      <span class="stat-value" id="stat-avg">-</span>
-    </div>
-    <button class="btn btn-green" style="margin-top:20px" onclick="updateStatsDisplay()">🔄 Refresh</button>
-    <button class="btn btn-red" onclick="confirmReset()">🗑 Reset All Stats</button>
-  </div>
-
-  <!-- ==================== FREE TIMER PAGE ==================== -->
-  <div class="page" id="page-timer">
-
-    <div id="timer-setup">
-      <div class="section-title">Free Timer</div>
-      <div class="timer-big" id="free-timer-display">05:00</div>
-      <div class="slider-wrap">
-        <label>Minutes: <b id="free-min-label">5</b></label>
-        <input type="range" min="1" max="60" value="5" id="free-min-slider" oninput="updateFreeTimer(this.value)">
-      </div>
-      <button class="btn btn-green" onclick="startFreeTimer()">▶ Start Timer</button>
-    </div>
-
-    <div id="timer-running" style="display:none">
-      <div class="section-title" style="text-align:center">Free Timer Running</div>
-      <div class="countdown-display">
-        <div class="countdown-time" id="free-countdown-time">00:00</div>
-        <div class="countdown-label">remaining</div>
-      </div>
-      <button class="btn-stop" onclick="stopFreeTimer()">⏹ Stop</button>
-    </div>
-
-  </div>
-
-</div>
-
-<!-- FLASH OVERLAY -->
-<div class="flash" id="flash">
-  <div class="flash-icon" id="flash-icon">🎉</div>
-  <div class="flash-title" id="flash-title">Title</div>
-  <div class="flash-sub" id="flash-sub">Subtitle</div>
 </div>
 
 <script>
-// ============================================================
-// QUESTION BANK — 5 categories x 10 questions = 100,000 combos
-// ============================================================
-const categories = [
-  "Did you START?",
-  "Did you UNDERSTAND?",
-  "Did you WORK HARD?",
-  "Did you CHECK?",
-  "Are you SURE?"
+// MATRIX RAIN
+(function(){
+  const c=document.getElementById('matrix-canvas'),ctx=c.getContext('2d');
+  function resize(){c.width=innerWidth;c.height=innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  const cols=Math.floor(innerWidth/20),drops=Array(cols).fill(1);
+  const chars='01アイウカキクサシスタチツナニヌ';
+  setInterval(()=>{
+    ctx.fillStyle='rgba(0,0,0,0.04)';ctx.fillRect(0,0,c.width,c.height);
+    ctx.fillStyle='#00ff41';ctx.font='14px monospace';
+    drops.forEach((y,i)=>{
+      ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*20,y*20);
+      if(y*20>c.height&&Math.random()>0.975)drops[i]=0;
+      drops[i]++;
+    });
+  },60);
+})();
+
+// CURSOR
+const cursor=document.getElementById('cursor');
+document.addEventListener('mousemove',e=>{cursor.style.left=e.clientX+'px';cursor.style.top=e.clientY+'px';});
+document.addEventListener('mousedown',()=>cursor.classList.add('clicking'));
+document.addEventListener('mouseup',()=>cursor.classList.remove('clicking'));
+
+// QUESTIONS
+const CATS=["📖 DID YOU START?","🧠 DID YOU UNDERSTAND?","💪 DID YOU WORK HARD?","✅ DID YOU CHECK?","🔒 HONESTY CHECK"];
+const QS=[
+  ["Did you actually sit down and start?","Did you open your book or notes?","Did you have your pen and materials ready?","Did you sit at a proper desk or table?","Did you put your phone in another room?","Were there zero distractions around you?","Did you start within 5 minutes of sitting?","Was your school bag packed and ready?","Was your notebook open in front of you?","Did you set a timer before starting?"],
+  ["Did you fully understand the topic?","Did you read every word of the question?","Were there genuinely no confusions?","Did everything make complete sense?","Could you explain this to someone else?","Did you truly grasp the main concept?","Did you reread any part you did not get?","Did you know every step of the process?","Were you familiar with the topic?","Were you answering from knowledge, not guessing?"],
+  ["Did you spend at least 10 minutes on it?","Did you do it entirely by yourself?","Did you avoid copying from anyone?","Did you write everything neatly?","Did you show all working and steps?","Did you avoid taking easy shortcuts?","Did you try the hardest parts first?","Did you finish without asking for help?","Did you give it your absolute full effort?","Did you go above what was asked?"],
+  ["Did you check every single answer?","Did you reread your work top to bottom?","Did you correct any mistakes you found?","Are all spellings and grammar correct?","Did you answer every single question?","Did you skip nothing, even hard parts?","Did you double check any calculations?","Is your work neat and presentable?","Are there zero blank spaces left?","Did you check it a second time?"],
+  ["Are you being 100% completely honest?","Are all your answers based on truth?","Did you truly do everything you claimed?","Are there absolutely no lies?","Could you prove everything you just said?","Would your teacher agree work is complete?","Is your work genuinely worth full marks?","Are there truly no missing sections?","Is every part fully and properly complete?","Do you swear on your grades it is done?"]
 ];
 
-const questions = [
-  ["Did you actually start?","Did you open your book?","Did you get your pen ready?","Did you sit at a proper table?","Did you put your phone away?","Were there no distractions?","Did you start on time?","Was your bag ready?","Was your notebook open?","Did you set a timer?"],
-  ["Did you understand it?","Did you read it fully?","Were there no confusions?","Did it all make sense?","Can you explain it?","Did you get the concept?","Did you reread if lost?","Did you know the steps?","Did you know the topic?","Were you not guessing?"],
-  ["Did you take 10+ minutes?","Did you do it yourself?","Was there no copying?","Did you write neatly?","Did you show all steps?","Did you avoid shortcuts?","Did you try the hard parts?","Did you take no help?","Did you give full effort?","Did you do extra too?"],
-  ["Did you check your answers?","Did you reread your work?","Did you fix your mistakes?","Are spellings correct?","Are all questions done?","Was nothing skipped?","Did you verify the maths?","Is it neat and tidy?","Are there no blank spaces?","Did you double check?"],
-  ["Are you 100% honest?","Are you not guessing?","Did you really do it?","Are there no lies?","Can you prove you did it?","Would your teacher pass it?","Is it worth full marks?","Are there no missing parts?","Is it fully complete?","Do you swear it is done?"]
+// ACHIEVEMENTS
+const ACHS=[
+  {id:'first',icon:'🌱',name:'First Steps',desc:'Complete your first session',check:s=>s.totalSessions>=1},
+  {id:'perfect1',icon:'⭐',name:'Perfectionist',desc:'Get a perfect 5/5 score',check:s=>s.perfectScores>=1},
+  {id:'perfect5',icon:'🌟',name:'Star Student',desc:'Get 5 perfect scores',check:s=>s.perfectScores>=5},
+  {id:'sess10',icon:'📚',name:'Dedicated',desc:'Complete 10 sessions',check:s=>s.totalSessions>=10},
+  {id:'sess50',icon:'🏆',name:'Champion',desc:'Complete 50 sessions',check:s=>s.totalSessions>=50},
+  {id:'hour',icon:'⏰',name:'Time Lord',desc:'Earn 60+ minutes total',check:s=>s.totalSecs>=3600},
+  {id:'streak3',icon:'🔥',name:'On Fire',desc:'3 perfect scores in a row',check:s=>s.bestStreak>=3},
+  {id:'streak5',icon:'💥',name:'Unstoppable',desc:'5 perfect scores in a row',check:s=>s.bestStreak>=5},
+  {id:'honest',icon:'💎',name:'Diamond Honest',desc:'10+ sessions, never caught lying',check:s=>s.totalSessions>=10&&s.caughtLying===0},
+  {id:'grinder',icon:'⚙',name:'The Grinder',desc:'5 sessions in one day',check:s=>s.todaySessions>=5},
 ];
 
-// ============================================================
 // STATE
-// ============================================================
-let state = {
-  sessionsDone: 0,       // sessions this cycle (resets after 5)
-  cycleEarned: 0,        // seconds earned this cycle
-  answers: [],           // answers for current quiz
-  currentQ: 0,           // current question index (0-4)
-  pickedQs: [],          // random question indices for this quiz
-  countdownInterval: null,
-  freeTimerInterval: null,
-};
+let st={sessionsDone:0,cycleEarned:0,answers:[],currentQ:0,pickedQs:[],cdInterval:null,freeInterval:null,cdTotal:0,freeTotal:0,qTimerInterval:null,qTimeLeft:20,currentStreak:0};
+const defStats={totalSecs:0,totalSessions:0,perfectScores:0,caughtLying:0,totalScore:0,bestStreak:0,currentStreak:0,history:[],unlockedAchs:[],todaySessions:0,todayDate:''};
+let stats=JSON.parse(localStorage.getItem('mcStats3')||'null')||{...defStats};
+const today=new Date().toDateString();
+if(stats.todayDate!==today){stats.todayDate=today;stats.todaySessions=0;}
+function save(){localStorage.setItem('mcStats3',JSON.stringify(stats));}
 
-// Stats (localStorage persistent)
-let stats = JSON.parse(localStorage.getItem('mcStats') || JSON.stringify({
-  totalSecs: 0,
-  totalSessions: 0,
-  perfectScores: 0,
-  caughtLying: 0,
-  totalScore: 0,
-}));
-
-function saveStats() {
-  localStorage.setItem('mcStats', JSON.stringify(stats));
+// TABS
+function switchTab(tab,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('page-'+tab).classList.add('active');
+  if(tab==='stats')renderStats();
+  if(tab==='history')renderHistory();
 }
 
-// ============================================================
-// TAB SWITCHING
-// ============================================================
-function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  event.target.classList.add('active');
-  document.getElementById('page-' + tab).classList.add('active');
-  if (tab === 'stats') updateStatsDisplay();
+// TRACK
+function renderTrack(){
+  const t=document.getElementById('session-track');t.innerHTML='';
+  for(let i=0;i<5;i++){const d=document.createElement('div');d.className='s-dot'+(i<st.sessionsDone?' done':i===st.sessionsDone?' current':'');t.appendChild(d);}
+  const m=Math.floor(st.cycleEarned/60),s=st.cycleEarned%60;
+  document.getElementById('cycle-display').textContent=m+':'+(s<10?'0':'')+s;
+  updateHUD();
 }
 
-// ============================================================
-// SESSION DOTS
-// ============================================================
-function renderDots() {
-  const wrap = document.getElementById('session-dots');
-  wrap.innerHTML = '';
-  for (let i = 0; i < 5; i++) {
-    const d = document.createElement('div');
-    d.className = 'dot';
-    if (i < state.sessionsDone) d.classList.add('done');
-    else if (i === state.sessionsDone) d.classList.add('current');
-    wrap.appendChild(d);
-  }
-  const m = Math.floor(state.cycleEarned / 60);
-  const s = state.cycleEarned % 60;
-  document.getElementById('cycle-earned-display').textContent = m + 'm ' + s + 's';
+function updateHUD(){
+  document.getElementById('hud-sessions').textContent=st.sessionsDone;
+  const m=Math.floor(st.cycleEarned/60),s=st.cycleEarned%60;
+  document.getElementById('hud-earned').textContent=m+':'+(s<10?'0':'')+s;
+  document.getElementById('hud-streak').textContent=st.currentStreak;
+  document.getElementById('hud-total').textContent=stats.totalSessions;
 }
 
-// ============================================================
 // QUIZ
-// ============================================================
-function startQuiz() {
-  state.answers = [];
-  state.currentQ = 0;
-  state.pickedQs = questions.map(cat => Math.floor(Math.random() * 10));
-  showScreen('quiz');
-  showQuestion();
+function startQuiz(){
+  st.answers=[];st.currentQ=0;
+  st.pickedQs=QS.map(q=>Math.floor(Math.random()*10));
+  showScreen('quiz');showQ();
 }
 
-function showQuestion() {
-  const i = state.currentQ;
-  document.getElementById('q-progress').textContent = 'Question ' + (i+1) + ' of 5';
-  document.getElementById('progress-bar').style.width = (i / 5 * 100) + '%';
-  document.getElementById('q-category').textContent = categories[i];
-  document.getElementById('q-text').textContent = questions[i][state.pickedQs[i]];
-  document.getElementById('q-num').textContent = 'Q' + (i+1) + ' of 5';
+function showQ(){
+  const i=st.currentQ;
+  document.getElementById('q-num-label').textContent='QUESTION '+(i+1)+'/5';
+  document.getElementById('progress-fill').style.width=(i/5*100)+'%';
+  document.getElementById('q-cat').textContent=CATS[i];
+  document.getElementById('q-text').textContent=QS[i][st.pickedQs[i]];
+  clearInterval(st.qTimerInterval);
+  st.qTimeLeft=20;
+  const pill=document.getElementById('q-timer');
+  pill.classList.remove('urgent');pill.textContent=st.qTimeLeft;
+  st.qTimerInterval=setInterval(()=>{
+    st.qTimeLeft--;pill.textContent=st.qTimeLeft;
+    if(st.qTimeLeft<=5)pill.classList.add('urgent');
+    if(st.qTimeLeft<=0){clearInterval(st.qTimerInterval);toast('⏰ Time up! Counted as No.','danger');answer(false);}
+  },1000);
 }
 
-function answer(yes) {
-  state.answers.push(yes);
-  state.currentQ++;
-  if (state.currentQ < 5) {
-    showQuestion();
-  } else {
-    finishQuiz();
-  }
+function answer(yes){
+  clearInterval(st.qTimerInterval);
+  spawnParticles(yes?'✅':'❌');
+  st.answers.push(yes);st.currentQ++;
+  if(st.currentQ<5)showQ();else finishQuiz();
 }
 
-function finishQuiz() {
-  const score = state.answers.filter(Boolean).length;
-  let earned = 0, icon, title, sub;
+function finishQuiz(){
+  const score=st.answers.filter(Boolean).length;
+  let earned=0,emoji,title,sub;
+  if(score===5){earned=120;emoji='⭐';title='PERFECT SCORE!';sub='You aced every question!';}
+  else if(score===4){earned=90;emoji='🎉';title='GREAT JOB! 4/5';sub='Almost perfect!';}
+  else if(score===3){earned=60;emoji='👍';title='GOOD! 3/5';sub='Keep up the effort!';}
+  else if(score===2){earned=30;emoji='😐';title='OKAY... 2/5';sub='Be more honest next time.';}
+  else if(score===1){earned=0;emoji='😬';title='ONLY 1/5';sub='You can do much better!';}
+  else{earned=0;emoji='🚨';title='LYING DETECTED';sub='No time earned. Be honest!';}
 
-  if      (score === 5) { earned=120; icon='⭐'; title='PERFECT! 5/5';     sub='+2 minutes earned!'; }
-  else if (score === 4) { earned=90;  icon='🎉'; title='Great! 4/5';        sub='+1 min 30 sec earned!'; }
-  else if (score === 3) { earned=60;  icon='👍'; title='Good! 3/5';         sub='+1 minute earned!'; }
-  else if (score === 2) { earned=30;  icon='😐'; title='Hmm... 2/5';        sub='+30 seconds earned'; }
-  else if (score === 1) { earned=0;   icon='😬'; title='Only 1/5...';       sub='No time earned. Try harder!'; }
-  else                  { earned=0;   icon='🚨'; title='Lying detected!';   sub='No time earned!'; }
+  if(score===5){st.currentStreak++;if(st.currentStreak>stats.bestStreak)stats.bestStreak=st.currentStreak;}
+  else st.currentStreak=0;
+  stats.currentStreak=st.currentStreak;
+  stats.totalSessions++;stats.todaySessions++;stats.totalSecs+=earned;stats.totalScore+=score;
+  if(score===5)stats.perfectScores++;
+  if(score===0)stats.caughtLying++;
+  stats.history.unshift({score,earned,answers:[...st.answers],date:new Date().toLocaleString()});
+  if(stats.history.length>50)stats.history.pop();
+  save();checkAchievements();
+  st.cycleEarned+=earned;st.sessionsDone++;
 
-  // Update stats
-  stats.totalSessions++;
-  stats.totalSecs += earned;
-  stats.totalScore += score;
-  if (score === 5) stats.perfectScores++;
-  if (score === 0) stats.caughtLying++;
-  saveStats();
-
-  state.cycleEarned += earned;
-  state.sessionsDone++;
-
-  // Score pills
-  const grid = document.getElementById('score-grid');
-  grid.innerHTML = '';
-  state.answers.forEach((a, i) => {
-    const p = document.createElement('div');
-    p.className = 'score-pill ' + (a ? 'yes' : 'no');
-    p.innerHTML = 'Q' + (i+1) + '<br>' + (a ? '✓' : '✗');
+  const grid=document.getElementById('score-grid');grid.innerHTML='';
+  st.answers.forEach((a,i)=>{
+    const p=document.createElement('div');p.className='score-pill '+(a?'yes':'no');
+    p.innerHTML=`<span class="pill-icon">${a?'✅':'❌'}</span><span class="pill-label">Q${i+1}</span>`;
     grid.appendChild(p);
   });
-
-  document.getElementById('result-icon').textContent = icon;
-  document.getElementById('result-title').textContent = title;
-  document.getElementById('result-sub').textContent = sub;
-
-  const btn = document.getElementById('result-next-btn');
-  if (state.sessionsDone >= 5) {
-    btn.textContent = '🎮 Start Minecraft Time!';
-  } else {
-    btn.textContent = 'Continue (' + state.sessionsDone + '/5 done) ▶';
-  }
-
-  showScreen('result');
-  flashMsg(icon, title, sub);
+  const em=Math.floor(earned/60),es=earned%60;
+  document.getElementById('earned-num').textContent='+'+em+':'+(es<10?'0':'')+es;
+  document.getElementById('result-emoji').textContent=emoji;
+  document.getElementById('result-title').textContent=title;
+  document.getElementById('result-sub').textContent=sub;
+  const nb=document.getElementById('next-btn');
+  nb.textContent=st.sessionsDone>=5?'🎮 START MINECRAFT TIME!':'CONTINUE ('+st.sessionsDone+'/5) ▶';
+  showScreen('result');showFlash(emoji,title,sub);spawnParticles(emoji,12);
 }
 
-function afterResult() {
-  if (state.sessionsDone >= 5) {
-    startCountdown();
-  } else {
-    showScreen('start');
-    renderDots();
-  }
+function afterResult(){
+  if(st.sessionsDone>=5)startCountdown();
+  else{showScreen('start');renderTrack();}
 }
 
-// ============================================================
 // COUNTDOWN
-// ============================================================
-function startCountdown() {
-  let secs = state.cycleEarned;
-  showScreen('countdown');
-  updateCountdownDisplay(secs);
-
-  state.countdownInterval = setInterval(() => {
-    secs--;
-    updateCountdownDisplay(secs);
-    if (secs <= 0) {
-      clearInterval(state.countdownInterval);
-      endCountdown();
-    }
-  }, 1000);
+function startCountdown(){
+  st.cdTotal=st.cycleEarned;let rem=st.cdTotal;
+  const ring=document.getElementById('ring-fill');
+  showScreen('countdown');updateCD(rem);ring.style.strokeDashoffset='0';
+  st.cdInterval=setInterval(()=>{
+    rem--;updateCD(rem);
+    ring.style.strokeDashoffset=(565*(1-rem/st.cdTotal))+'';
+    if(rem<=0){clearInterval(st.cdInterval);endCountdown();}
+  },1000);
 }
 
-function updateCountdownDisplay(secs) {
-  const m = Math.floor(secs / 60);
-  const s = secs % 60;
-  document.getElementById('countdown-time').textContent =
-    String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+function updateCD(s){
+  const m=Math.floor(s/60),sec=s%60;
+  document.getElementById('cd-time').textContent=(m<10?'0':'')+m+':'+(sec<10?'0':'')+sec;
 }
 
-function stopCountdown() {
-  if (confirm('Stop the timer early? Your remaining time will be lost.')) {
-    clearInterval(state.countdownInterval);
-    endCountdown();
-  }
+function stopCountdown(){
+  if(confirm('Stop timer early? Remaining time is lost!')){clearInterval(st.cdInterval);endCountdown();}
 }
 
-function endCountdown() {
-  state.sessionsDone = 0;
-  state.cycleEarned = 0;
-  showScreen('start');
-  renderDots();
-  flashMsg('⏰', 'Time is up!', 'Stop playing and get back to work!');
+function endCountdown(){
+  st.sessionsDone=0;st.cycleEarned=0;
+  showScreen('start');renderTrack();
+  showFlash('⏰','TIME IS UP!','Back to work! Great job today.');
 }
 
-// ============================================================
 // FREE TIMER
-// ============================================================
-function updateFreeTimer(val) {
-  document.getElementById('free-min-label').textContent = val;
-  const m = String(val).padStart(2,'0');
-  document.getElementById('free-timer-display').textContent = m + ':00';
+function onFreeSlider(v){
+  document.getElementById('free-min-val').textContent=v;
+  document.getElementById('free-display').textContent=(v<10?'0':'')+v+':00';
 }
 
-function startFreeTimer() {
-  let secs = parseInt(document.getElementById('free-min-slider').value) * 60;
-  document.getElementById('timer-setup').style.display = 'none';
-  document.getElementById('timer-running').style.display = 'block';
-  updateFreeCountdown(secs);
-
-  state.freeTimerInterval = setInterval(() => {
-    secs--;
-    updateFreeCountdown(secs);
-    if (secs <= 0) {
-      clearInterval(state.freeTimerInterval);
-      stopFreeTimer();
-      flashMsg('⏰', 'Free timer done!', 'Time to get back to work!');
-    }
-  }, 1000);
+function startFreeTimer(){
+  const mins=parseInt(document.getElementById('free-slider').value);
+  st.freeTotal=mins*60;let rem=st.freeTotal;
+  const ring=document.getElementById('free-ring');
+  document.getElementById('timer-setup-view').style.display='none';
+  document.getElementById('timer-running-view').style.display='block';
+  updateFreeCD(rem);ring.style.strokeDashoffset='0';
+  st.freeInterval=setInterval(()=>{
+    rem--;updateFreeCD(rem);
+    ring.style.strokeDashoffset=(565*(1-rem/st.freeTotal))+'';
+    if(rem<=0){clearInterval(st.freeInterval);stopFreeTimer();showFlash('⏰','FREE TIME DONE!','Back to homework now!');}
+  },1000);
 }
 
-function updateFreeCountdown(secs) {
-  const m = Math.floor(secs / 60);
-  const s = secs % 60;
-  document.getElementById('free-countdown-time').textContent =
-    String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+function updateFreeCD(s){
+  const m=Math.floor(s/60),sec=s%60;
+  document.getElementById('free-cd-time').textContent=(m<10?'0':'')+m+':'+(sec<10?'0':'')+sec;
 }
 
-function stopFreeTimer() {
-  clearInterval(state.freeTimerInterval);
-  document.getElementById('timer-setup').style.display = 'block';
-  document.getElementById('timer-running').style.display = 'none';
+function stopFreeTimer(){
+  clearInterval(st.freeInterval);
+  document.getElementById('timer-setup-view').style.display='block';
+  document.getElementById('timer-running-view').style.display='none';
 }
 
-// ============================================================
 // STATS
-// ============================================================
-function updateStatsDisplay() {
-  const m = Math.floor(stats.totalSecs / 60);
-  const s = stats.totalSecs % 60;
-  document.getElementById('stat-total-time').textContent = m + 'm ' + s + 's';
-  document.getElementById('stat-sessions').textContent = stats.totalSessions;
-  document.getElementById('stat-perfect').textContent = stats.perfectScores;
-  document.getElementById('stat-caught').textContent = stats.caughtLying;
-  const avg = stats.totalSessions > 0
-    ? (stats.totalScore / stats.totalSessions).toFixed(1) + ' / 5'
-    : '-';
-  document.getElementById('stat-avg').textContent = avg;
-}
-
-function confirmReset() {
-  if (confirm('Reset ALL stats? This cannot be undone!')) {
-    stats = { totalSecs:0, totalSessions:0, perfectScores:0, caughtLying:0, totalScore:0 };
-    saveStats();
-    updateStatsDisplay();
-    flashMsg('🗑', 'Stats Reset!', 'Everything cleared.');
-  }
-}
-
-// ============================================================
-// HELPERS
-// ============================================================
-function showScreen(name) {
-  ['start','quiz','result','countdown'].forEach(s => {
-    document.getElementById('screen-' + s).style.display = s === name ? 'block' : 'none';
+function renderStats(){
+  const m=Math.floor(stats.totalSecs/60),s=stats.totalSecs%60;
+  document.getElementById('s-total-time').textContent=m+'m '+s+'s';
+  document.getElementById('s-sessions').textContent=stats.totalSessions;
+  document.getElementById('s-perfect').textContent=stats.perfectScores;
+  document.getElementById('s-streak').textContent=stats.bestStreak;
+  document.getElementById('s-caught').textContent=stats.caughtLying;
+  document.getElementById('s-avg').textContent=stats.totalSessions>0?(stats.totalScore/stats.totalSessions).toFixed(1)+'/5':'-';
+  const list=document.getElementById('achievement-list');list.innerHTML='';
+  ACHS.forEach(a=>{
+    const unlocked=stats.unlockedAchs.includes(a.id);
+    const el=document.createElement('div');el.className='achievement'+(unlocked?' unlocked':'');
+    el.innerHTML=`<div class="ach-icon">${a.icon}</div><div class="ach-info"><div class="ach-name">${a.name}</div><div class="ach-desc">${a.desc}</div></div><div class="ach-badge">${unlocked?'UNLOCKED':'LOCKED'}</div>`;
+    list.appendChild(el);
   });
 }
 
-function flashMsg(icon, title, sub) {
-  const f = document.getElementById('flash');
-  document.getElementById('flash-icon').textContent = icon;
-  document.getElementById('flash-title').textContent = title;
-  document.getElementById('flash-sub').textContent = sub;
-  f.classList.add('show');
-  setTimeout(() => f.classList.remove('show'), 1800);
+function checkAchievements(){
+  ACHS.forEach(a=>{
+    if(!stats.unlockedAchs.includes(a.id)&&a.check(stats)){
+      stats.unlockedAchs.push(a.id);save();
+      setTimeout(()=>toast('🏆 Achievement: '+a.name,'gold'),1000);
+    }
+  });
 }
 
-// ============================================================
+// HISTORY
+function renderHistory(){
+  const list=document.getElementById('history-list');list.innerHTML='';
+  if(!stats.history.length){list.innerHTML='<div class="empty-state">NO SESSIONS YET<br><br>Complete a quiz to see your log</div>';return;}
+  stats.history.forEach(h=>{
+    const m=Math.floor(h.earned/60),s=h.earned%60;
+    const el=document.createElement('div');el.className='history-item';
+    const sc=Math.min(h.score,5);
+    const dots=(h.answers||[]).map(a=>`<div class="h-dot ${a?'y':'n'}"></div>`).join('');
+    el.innerHTML=`<div class="history-score sc${sc}">${sc}/5</div><div class="history-info"><div class="history-time-earned">+${m}m ${s}s earned</div><div class="history-date">${h.date}</div></div><div class="history-dots">${dots}</div>`;
+    list.appendChild(el);
+  });
+}
+
+function confirmReset(){
+  if(confirm('Reset ALL data including history and achievements?')){
+    stats={...defStats,todayDate:today};save();renderStats();
+    toast('🗑 All data reset.','danger');
+  }
+}
+
+// HELPERS
+function showScreen(name){
+  ['start','quiz','result','countdown'].forEach(s=>{
+    document.getElementById('screen-'+s).style.display=s===name?'block':'none';
+  });
+}
+
+function showFlash(emoji,title,sub){
+  document.getElementById('flash-emoji').textContent=emoji;
+  document.getElementById('flash-title').textContent=title;
+  document.getElementById('flash-sub').textContent=sub;
+  const f=document.getElementById('flash');
+  f.classList.add('show');setTimeout(()=>f.classList.remove('show'),2200);
+}
+
+function toast(msg,type=''){
+  const t=document.createElement('div');t.className='toast '+type;t.textContent=msg;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(()=>t.remove(),3200);
+}
+
+function spawnParticles(emoji,count=8){
+  for(let i=0;i<count;i++){
+    const p=document.createElement('div');p.className='particle';p.textContent=emoji;
+    p.style.left=Math.random()*100+'vw';p.style.top=Math.random()*100+'vh';
+    p.style.setProperty('--dx',(Math.random()-0.5)*200+'px');
+    p.style.setProperty('--dy',-(Math.random()*200+50)+'px');
+    p.style.animationDelay=Math.random()*0.3+'s';
+    document.body.appendChild(p);setTimeout(()=>p.remove(),1400);
+  }
+}
+
 // INIT
-// ============================================================
-renderDots();
-updateStatsDisplay();
+renderTrack();updateHUD();
 </script>
 </body>
 </html>

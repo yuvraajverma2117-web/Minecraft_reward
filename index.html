@@ -1,410 +1,776 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Minecraft Reward System</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minecraft Reward System</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
 
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #0a0a0a;
-      color: #ffffff;
-      min-height: 100vh;
-    }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #0a0a0a;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
 
-    header {
-      background: linear-gradient(135deg, #1a6b1a, #2d8f2d);
-      padding: 60px 20px;
-      text-align: center;
-    }
+  h1 {
+    font-size: 1.8em;
+    color: #4cff4c;
+    text-align: center;
+    margin-bottom: 6px;
+  }
 
-    header h1 {
-      font-size: 2.5em;
-      color: #ffffff;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-    }
+  .subtitle {
+    color: #666;
+    font-size: 0.9em;
+    text-align: center;
+    margin-bottom: 24px;
+  }
 
-    header p {
-      margin-top: 12px;
-      font-size: 1.1em;
-      color: #c8ffc8;
-    }
+  /* NAV TABS */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
 
-    .badge {
-      display: inline-block;
-      background: #ffffff22;
-      border: 1px solid #ffffff44;
-      border-radius: 20px;
-      padding: 4px 14px;
-      margin: 6px 4px;
-      font-size: 0.85em;
-      color: #eeffee;
-    }
+  .tab {
+    padding: 10px 20px;
+    border-radius: 30px;
+    border: 2px solid #2a2a2a;
+    background: #111;
+    color: #888;
+    cursor: pointer;
+    font-size: 0.95em;
+    transition: all 0.2s;
+  }
 
-    .badges { margin-top: 20px; }
+  .tab.active {
+    border-color: #4cff4c;
+    color: #4cff4c;
+    background: #0a1a0a;
+  }
 
-    nav {
-      background: #111;
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      padding: 14px;
-      flex-wrap: wrap;
-      border-bottom: 1px solid #2a2a2a;
-    }
+  /* CARD */
+  .card {
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 16px;
+    padding: 28px;
+    width: 100%;
+    max-width: 480px;
+  }
 
-    nav a {
-      color: #4cff4c;
-      text-decoration: none;
-      font-size: 0.95em;
-      padding: 6px 16px;
-      border-radius: 20px;
-      border: 1px solid #2a5c2a;
-      transition: background 0.2s;
-    }
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
 
-    nav a:hover { background: #1a3a1a; }
+  /* PROGRESS BAR */
+  .progress-wrap {
+    background: #1a1a1a;
+    border-radius: 10px;
+    height: 10px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
 
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 40px 20px;
-    }
+  .progress-bar {
+    height: 100%;
+    background: #4cff4c;
+    border-radius: 10px;
+    transition: width 0.4s ease;
+  }
 
-    section { margin-bottom: 60px; }
+  .progress-label {
+    font-size: 0.8em;
+    color: #555;
+    margin-bottom: 8px;
+  }
 
-    h2 {
-      font-size: 1.6em;
-      color: #4cff4c;
-      border-left: 4px solid #4cff4c;
-      padding-left: 14px;
-      margin-bottom: 24px;
-    }
+  /* QUESTION CARD */
+  .question-box {
+    background: #0d1a0d;
+    border: 1px solid #1a3a1a;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
 
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-    }
+  .question-category {
+    font-size: 0.75em;
+    color: #4cff4c;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+  }
 
-    .feature-card {
-      background: #111;
-      border: 1px solid #2a2a2a;
-      border-radius: 12px;
-      padding: 20px;
-    }
+  .question-text {
+    font-size: 1.3em;
+    color: #fff;
+    line-height: 1.4;
+  }
 
-    .feature-card .icon { font-size: 2em; margin-bottom: 10px; }
-    .feature-card h3 { color: #4cff4c; margin-bottom: 8px; font-size: 1em; }
-    .feature-card p { color: #aaa; font-size: 0.9em; line-height: 1.5; }
+  .question-num {
+    font-size: 0.8em;
+    color: #444;
+    margin-top: 8px;
+  }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
+  /* BUTTONS */
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+  }
 
-    th {
-      background: #1a3a1a;
-      color: #4cff4c;
-      padding: 12px 16px;
-      text-align: left;
-      font-size: 0.9em;
-    }
+  .btn {
+    flex: 1;
+    padding: 16px;
+    border-radius: 12px;
+    border: none;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
 
-    td {
-      padding: 12px 16px;
-      border-bottom: 1px solid #1a1a1a;
-      color: #ccc;
-      font-size: 0.9em;
-    }
+  .btn:active { transform: scale(0.97); }
 
-    tr:hover td { background: #111; }
+  .btn-yes {
+    background: #1a4a1a;
+    color: #4cff4c;
+    border: 2px solid #2d8f2d;
+  }
 
-    .lcd-preview {
-      background: #1a2e1a;
-      border: 3px solid #4a7c4a;
-      border-radius: 10px;
-      padding: 20px 24px;
-      font-family: monospace;
-      font-size: 1.1em;
-      color: #90ee90;
-      max-width: 340px;
-      margin: 10px auto;
-      text-align: center;
-      box-shadow: 0 0 20px #1a4a1a;
-    }
+  .btn-yes:hover { background: #2d8f2d; }
 
-    .lcd-row {
-      background: #2d5a2d;
-      border-radius: 4px;
-      padding: 8px 12px;
-      margin: 6px 0;
-      letter-spacing: 2px;
-    }
+  .btn-no {
+    background: #3a1a1a;
+    color: #ff6666;
+    border: 2px solid #8f2d2d;
+  }
 
-    .step {
-      display: flex;
-      gap: 16px;
-      align-items: flex-start;
-      margin-bottom: 20px;
-    }
+  .btn-no:hover { background: #8f2d2d; }
 
-    .step-num {
-      background: #4cff4c;
-      color: #000;
-      font-weight: bold;
-      min-width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.9em;
-      flex-shrink: 0;
-    }
+  .btn-green {
+    background: #2d8f2d;
+    color: #fff;
+    border: none;
+    width: 100%;
+    margin-top: 12px;
+  }
 
-    .step-text h3 { color: #fff; margin-bottom: 4px; }
-    .step-text p  { color: #aaa; font-size: 0.9em; line-height: 1.5; }
+  .btn-green:hover { background: #3aaa3a; }
 
-    code {
-      background: #1a1a1a;
-      border: 1px solid #333;
-      border-radius: 6px;
-      padding: 2px 8px;
-      font-family: monospace;
-      color: #4cff4c;
-      font-size: 0.9em;
-    }
+  .btn-red {
+    background: #8f2d2d;
+    color: #fff;
+    border: none;
+    width: 100%;
+    margin-top: 8px;
+  }
 
-    .download-btn {
-      display: inline-block;
-      background: #2d8f2d;
-      color: #fff;
-      padding: 14px 32px;
-      border-radius: 30px;
-      text-decoration: none;
-      font-size: 1.1em;
-      font-weight: bold;
-      margin-top: 10px;
-      transition: background 0.2s;
-    }
+  /* RESULT SCREEN */
+  .result-icon {
+    font-size: 4em;
+    text-align: center;
+    margin-bottom: 12px;
+  }
 
-    .download-btn:hover { background: #3aaa3a; }
+  .result-title {
+    font-size: 1.5em;
+    text-align: center;
+    color: #4cff4c;
+    margin-bottom: 8px;
+  }
 
-    .version-list { list-style: none; }
-    .version-list li {
-      padding: 12px 0;
-      border-bottom: 1px solid #1a1a1a;
-      color: #ccc;
-      font-size: 0.95em;
-    }
+  .result-sub {
+    text-align: center;
+    color: #888;
+    margin-bottom: 20px;
+  }
 
-    .version-list li span {
-      color: #4cff4c;
-      font-weight: bold;
-      margin-right: 10px;
-    }
+  /* SCORE PILLS */
+  .score-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+  }
 
-    footer {
-      text-align: center;
-      padding: 40px 20px;
-      color: #444;
-      font-size: 0.85em;
-      border-top: 1px solid #1a1a1a;
-    }
+  .score-pill {
+    border-radius: 8px;
+    padding: 10px 4px;
+    text-align: center;
+    font-size: 0.75em;
+    background: #1a1a1a;
+    color: #555;
+    border: 1px solid #222;
+  }
 
-    footer a { color: #4cff4c; text-decoration: none; }
-  </style>
+  .score-pill.yes { background: #0d2a0d; color: #4cff4c; border-color: #2d8f2d; }
+  .score-pill.no  { background: #2a0d0d; color: #ff6666; border-color: #8f2d2d; }
+
+  /* COUNTDOWN */
+  .countdown-display {
+    background: #0d1a0d;
+    border: 2px solid #2d8f2d;
+    border-radius: 16px;
+    padding: 32px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .countdown-time {
+    font-size: 4em;
+    font-weight: bold;
+    color: #4cff4c;
+    font-family: monospace;
+    letter-spacing: 4px;
+  }
+
+  .countdown-label {
+    color: #888;
+    margin-top: 8px;
+    font-size: 0.9em;
+  }
+
+  .btn-stop {
+    background: #8f2d2d;
+    color: #fff;
+    border: none;
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+
+  /* STATS */
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid #1a1a1a;
+  }
+
+  .stat-label { color: #888; font-size: 0.95em; }
+  .stat-value { color: #4cff4c; font-size: 1.1em; font-weight: bold; }
+
+  /* FREE TIMER */
+  .timer-big {
+    font-size: 5em;
+    font-weight: bold;
+    color: #4cff4c;
+    font-family: monospace;
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .slider-wrap {
+    margin: 16px 0;
+  }
+
+  .slider-wrap label {
+    color: #888;
+    font-size: 0.85em;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  input[type=range] {
+    width: 100%;
+    accent-color: #4cff4c;
+  }
+
+  /* SESSION PROGRESS DOTS */
+  .session-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    border: 2px solid #333;
+    transition: all 0.3s;
+  }
+
+  .dot.done { background: #4cff4c; border-color: #4cff4c; }
+  .dot.current { background: #1a3a1a; border-color: #4cff4c; }
+
+  /* FLASH OVERLAY */
+  .flash {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    text-align: center;
+    padding: 40px;
+  }
+
+  .flash.show { opacity: 1; pointer-events: all; }
+  .flash-icon { font-size: 5em; margin-bottom: 16px; }
+  .flash-title { font-size: 2em; color: #4cff4c; margin-bottom: 10px; }
+  .flash-sub { color: #888; font-size: 1.1em; }
+
+  /* EARNED BANNER */
+  .earned-banner {
+    background: #0d2a0d;
+    border: 1px solid #2d8f2d;
+    border-radius: 10px;
+    padding: 12px 16px;
+    text-align: center;
+    margin-bottom: 16px;
+    color: #4cff4c;
+    font-size: 0.95em;
+  }
+
+  .section-title {
+    font-size: 1.1em;
+    color: #4cff4c;
+    margin-bottom: 16px;
+    font-weight: bold;
+  }
+</style>
 </head>
 <body>
 
-<header>
-  <div style="font-size:3em">🎮</div>
-  <h1>Minecraft Reward System</h1>
-  <p>An Arduino-powered homework accountability system</p>
-  <div class="badges">
-    <span class="badge">Arduino Uno</span>
-    <span class="badge">16x2 LCD</span>
-    <span class="badge">Joystick</span>
-    <span class="badge">EEPROM</span>
-    <span class="badge">v5.0</span>
+<h1>🎮 Minecraft Reward</h1>
+<p class="subtitle">Complete homework honestly to earn playtime</p>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('homework')">📚 Homework</div>
+  <div class="tab" onclick="switchTab('stats')">📊 Stats</div>
+  <div class="tab" onclick="switchTab('timer')">⏱ Timer</div>
+</div>
+
+<!-- MAIN CARD -->
+<div class="card">
+
+  <!-- ==================== HOMEWORK PAGE ==================== -->
+  <div class="page active" id="page-homework">
+
+    <!-- START SCREEN -->
+    <div id="screen-start">
+      <div class="section-title">Session Progress</div>
+      <div class="session-dots" id="session-dots"></div>
+      <div class="earned-banner" id="earned-banner">⏱ Earned this cycle: <b id="cycle-earned-display">0m 0s</b></div>
+      <div class="question-box" style="margin-bottom:20px">
+        <div class="question-category">Ready to begin?</div>
+        <div class="question-text">Answer 5 honest questions to earn Minecraft time</div>
+        <div class="question-num">100,000 possible question combinations</div>
+      </div>
+      <button class="btn btn-green" onclick="startQuiz()">Start Quiz ▶</button>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div id="screen-quiz" style="display:none">
+      <div class="progress-label" id="q-progress">Question 1 of 5</div>
+      <div class="progress-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+      <div class="question-box">
+        <div class="question-category" id="q-category">Category</div>
+        <div class="question-text" id="q-text">Loading...</div>
+        <div class="question-num" id="q-num">Q1</div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-yes" onclick="answer(true)">✅ Yes</button>
+        <button class="btn btn-no"  onclick="answer(false)">❌ No</button>
+      </div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="screen-result" style="display:none">
+      <div class="result-icon" id="result-icon">🎉</div>
+      <div class="result-title" id="result-title">Perfect!</div>
+      <div class="result-sub" id="result-sub">+2 minutes earned</div>
+      <div class="score-grid" id="score-grid"></div>
+      <button class="btn btn-green" id="result-next-btn" onclick="afterResult()">Continue ▶</button>
+    </div>
+
+    <!-- COUNTDOWN SCREEN -->
+    <div id="screen-countdown" style="display:none">
+      <div class="result-icon">🎮</div>
+      <div class="result-title">Play Minecraft!</div>
+      <div class="countdown-display">
+        <div class="countdown-time" id="countdown-time">00:00</div>
+        <div class="countdown-label">remaining</div>
+      </div>
+      <button class="btn-stop" onclick="stopCountdown()">⏹ Stop Early</button>
+    </div>
+
   </div>
-</header>
 
-<nav>
-  <a href="#features">Features</a>
-  <a href="#scoring">Scoring</a>
-  <a href="#lcd">LCD Preview</a>
-  <a href="#wiring">Wiring</a>
-  <a href="#setup">Setup</a>
-  <a href="#changelog">Changelog</a>
-  <a href="#download">Download</a>
-</nav>
-
-<div class="container">
-
-  <!-- FEATURES -->
-  <section id="features">
-    <h2>✨ Features</h2>
-    <div class="feature-grid">
-      <div class="feature-card">
-        <div class="icon">🎯</div>
-        <h3>Anti-Cheat Quiz</h3>
-        <p>50 questions across 5 categories. Arduino randomly picks 1 per category giving 100,000 possible combinations.</p>
-      </div>
-      <div class="feature-card">
-        <div class="icon">💾</div>
-        <h3>Permanent Stats</h3>
-        <p>Stats saved to EEPROM. Survives power off. Hold button 3 seconds on Stats page to reset.</p>
-      </div>
-      <div class="feature-card">
-        <div class="icon">🕹</div>
-        <h3>Swipe Navigation</h3>
-        <p>Push joystick left or right to browse between Homework, Stats and Free Timer pages.</p>
-      </div>
-      <div class="feature-card">
-        <div class="icon">⏱</div>
-        <h3>Free Timer</h3>
-        <p>Set any custom countdown from 1 to 60 minutes using the joystick. No quiz needed.</p>
-      </div>
-      <div class="feature-card">
-        <div class="icon">🔲</div>
-        <h3>Visual UI</h3>
-        <p>Bordered page selection, triangle navigation indicators and score feedback on the LCD.</p>
-      </div>
-      <div class="feature-card">
-        <div class="icon">⚡</div>
-        <h3>5 Session System</h3>
-        <p>Complete 5 quiz sessions and all your earned time combines into one big Minecraft countdown!</p>
-      </div>
+  <!-- ==================== STATS PAGE ==================== -->
+  <div class="page" id="page-stats">
+    <div class="section-title">Your Stats</div>
+    <div class="stat-row">
+      <span class="stat-label">Total time earned</span>
+      <span class="stat-value" id="stat-total-time">0m 0s</span>
     </div>
-  </section>
+    <div class="stat-row">
+      <span class="stat-label">Total sessions done</span>
+      <span class="stat-value" id="stat-sessions">0</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">Perfect scores (5/5)</span>
+      <span class="stat-value" id="stat-perfect">0</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">Times caught lying</span>
+      <span class="stat-value" id="stat-caught">0</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">Average score</span>
+      <span class="stat-value" id="stat-avg">-</span>
+    </div>
+    <button class="btn btn-green" style="margin-top:20px" onclick="updateStatsDisplay()">🔄 Refresh</button>
+    <button class="btn btn-red" onclick="confirmReset()">🗑 Reset All Stats</button>
+  </div>
 
-  <!-- SCORING -->
-  <section id="scoring">
-    <h2>📊 Scoring System</h2>
-    <table>
-      <tr><th>Score</th><th>Time Earned</th><th>Message</th></tr>
-      <tr><td>⭐ 5 / 5</td><td>2 minutes</td><td>PERFECT! 100% honest!</td></tr>
-      <tr><td>4 / 5</td><td>1 min 30 sec</td><td>Great job! Almost perfect!</td></tr>
-      <tr><td>3 / 5</td><td>1 minute</td><td>Good effort! Keep it up!</td></tr>
-      <tr><td>2 / 5</td><td>30 seconds</td><td>Hmm... be more honest!</td></tr>
-      <tr><td>0 – 1 / 5</td><td>No time 😢</td><td>Lying detected!</td></tr>
-    </table>
-  </section>
+  <!-- ==================== FREE TIMER PAGE ==================== -->
+  <div class="page" id="page-timer">
 
-  <!-- LCD PREVIEW -->
-  <section id="lcd">
-    <h2>🖥 LCD Preview</h2>
-    <p style="color:#aaa;margin-bottom:16px">What you see on the screen:</p>
-
-    <p style="color:#888;text-align:center;margin-bottom:6px">Home screen</p>
-    <div class="lcd-preview">
-      <div class="lcd-row">[Homework       ]</div>
-      <div class="lcd-row">         >> OK  </div>
+    <div id="timer-setup">
+      <div class="section-title">Free Timer</div>
+      <div class="timer-big" id="free-timer-display">05:00</div>
+      <div class="slider-wrap">
+        <label>Minutes: <b id="free-min-label">5</b></label>
+        <input type="range" min="1" max="60" value="5" id="free-min-slider" oninput="updateFreeTimer(this.value)">
+      </div>
+      <button class="btn btn-green" onclick="startFreeTimer()">▶ Start Timer</button>
     </div>
 
-    <p style="color:#888;text-align:center;margin:16px 0 6px">During quiz</p>
-    <div class="lcd-preview">
-      <div class="lcd-row">Q1: Did you start</div>
-      <div class="lcd-row">^^=Yes   vv=No  </div>
+    <div id="timer-running" style="display:none">
+      <div class="section-title" style="text-align:center">Free Timer Running</div>
+      <div class="countdown-display">
+        <div class="countdown-time" id="free-countdown-time">00:00</div>
+        <div class="countdown-label">remaining</div>
+      </div>
+      <button class="btn-stop" onclick="stopFreeTimer()">⏹ Stop</button>
     </div>
 
-    <p style="color:#888;text-align:center;margin:16px 0 6px">Countdown</p>
-    <div class="lcd-preview">
-      <div class="lcd-row">** MINECRAFT ** </div>
-      <div class="lcd-row">7m 42s remaining</div>
-    </div>
-  </section>
-
-  <!-- WIRING -->
-  <section id="wiring">
-    <h2>🔌 Wiring</h2>
-    <table>
-      <tr><th>Component</th><th>Pin</th><th>Arduino</th></tr>
-      <tr><td>LCD GND</td><td>GND</td><td>GND</td></tr>
-      <tr><td>LCD VCC</td><td>5V</td><td>5V</td></tr>
-      <tr><td>LCD SDA</td><td>Data</td><td>A4</td></tr>
-      <tr><td>LCD SCL</td><td>Clock</td><td>A5</td></tr>
-      <tr><td>Joystick GND</td><td>GND</td><td>GND</td></tr>
-      <tr><td>Joystick VCC</td><td>5V</td><td>5V</td></tr>
-      <tr><td>Joystick X</td><td>VRX</td><td>A0</td></tr>
-      <tr><td>Joystick Y</td><td>VRY</td><td>A1</td></tr>
-      <tr><td>Joystick Btn</td><td>SW</td><td>D2</td></tr>
-    </table>
-    <p style="color:#666;margin-top:12px;font-size:0.85em">💡 If LCD shows nothing: try changing 0x27 to 0x3F in the code</p>
-  </section>
-
-  <!-- SETUP -->
-  <section id="setup">
-    <h2>🚀 Setup Guide</h2>
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-text">
-        <h3>Download the code</h3>
-        <p>Download <code>minecraft_reward_system.ino</code> from this repo</p>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-text">
-        <h3>Install library</h3>
-        <p>In Arduino IDE go to Library Manager and install <code>LiquidCrystal_I2C</code> by Frank de Brabander</p>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-text">
-        <h3>Wire it up</h3>
-        <p>Connect LCD and Joystick according to the wiring table above</p>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <div class="step-text">
-        <h3>Upload</h3>
-        <p>Open the file in Arduino IDE or ArduinoDroid, select your board and upload!</p>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">5</div>
-      <div class="step-text">
-        <h3>Play!</h3>
-        <p>Complete 5 homework quiz sessions to earn your Minecraft time 🎮</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- CHANGELOG -->
-  <section id="changelog">
-    <h2>📜 Changelog</h2>
-    <ul class="version-list">
-      <li><span>v5.0</span>EEPROM stats, visual bordered UI, triangle navigation, score feedback, splash screen</li>
-      <li><span>v4.0</span>Persistent stats with lifetime seconds and sessions counter</li>
-      <li><span>v3.0</span>Swipe navigation, Stats page, Free Timer page</li>
-      <li><span>v2.0</span>PROGMEM memory optimization for question storage</li>
-      <li><span>v1.0</span>Basic 5-question quiz with Minecraft countdown timer</li>
-    </ul>
-  </section>
-
-  <!-- DOWNLOAD -->
-  <section id="download" style="text-align:center">
-    <h2>⬇️ Download</h2>
-    <p style="color:#aaa;margin-bottom:20px">Get the latest version of the sketch</p>
-    <a class="download-btn" href="minecraft_reward_system/minecraft_reward_system.ino">
-      ⬇️ Download .ino file
-    </a>
-  </section>
+  </div>
 
 </div>
 
-<footer>
-  <p>Built with ❤️ for Arduino Uno + 16x2 LCD + Joystick</p>
-  <p style="margin-top:8px"><a href="https://github.com">View on GitHub</a></p>
-</footer>
+<!-- FLASH OVERLAY -->
+<div class="flash" id="flash">
+  <div class="flash-icon" id="flash-icon">🎉</div>
+  <div class="flash-title" id="flash-title">Title</div>
+  <div class="flash-sub" id="flash-sub">Subtitle</div>
+</div>
 
+<script>
+// ============================================================
+// QUESTION BANK — 5 categories x 10 questions = 100,000 combos
+// ============================================================
+const categories = [
+  "Did you START?",
+  "Did you UNDERSTAND?",
+  "Did you WORK HARD?",
+  "Did you CHECK?",
+  "Are you SURE?"
+];
+
+const questions = [
+  ["Did you actually start?","Did you open your book?","Did you get your pen ready?","Did you sit at a proper table?","Did you put your phone away?","Were there no distractions?","Did you start on time?","Was your bag ready?","Was your notebook open?","Did you set a timer?"],
+  ["Did you understand it?","Did you read it fully?","Were there no confusions?","Did it all make sense?","Can you explain it?","Did you get the concept?","Did you reread if lost?","Did you know the steps?","Did you know the topic?","Were you not guessing?"],
+  ["Did you take 10+ minutes?","Did you do it yourself?","Was there no copying?","Did you write neatly?","Did you show all steps?","Did you avoid shortcuts?","Did you try the hard parts?","Did you take no help?","Did you give full effort?","Did you do extra too?"],
+  ["Did you check your answers?","Did you reread your work?","Did you fix your mistakes?","Are spellings correct?","Are all questions done?","Was nothing skipped?","Did you verify the maths?","Is it neat and tidy?","Are there no blank spaces?","Did you double check?"],
+  ["Are you 100% honest?","Are you not guessing?","Did you really do it?","Are there no lies?","Can you prove you did it?","Would your teacher pass it?","Is it worth full marks?","Are there no missing parts?","Is it fully complete?","Do you swear it is done?"]
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let state = {
+  sessionsDone: 0,       // sessions this cycle (resets after 5)
+  cycleEarned: 0,        // seconds earned this cycle
+  answers: [],           // answers for current quiz
+  currentQ: 0,           // current question index (0-4)
+  pickedQs: [],          // random question indices for this quiz
+  countdownInterval: null,
+  freeTimerInterval: null,
+};
+
+// Stats (localStorage persistent)
+let stats = JSON.parse(localStorage.getItem('mcStats') || JSON.stringify({
+  totalSecs: 0,
+  totalSessions: 0,
+  perfectScores: 0,
+  caughtLying: 0,
+  totalScore: 0,
+}));
+
+function saveStats() {
+  localStorage.setItem('mcStats', JSON.stringify(stats));
+}
+
+// ============================================================
+// TAB SWITCHING
+// ============================================================
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('page-' + tab).classList.add('active');
+  if (tab === 'stats') updateStatsDisplay();
+}
+
+// ============================================================
+// SESSION DOTS
+// ============================================================
+function renderDots() {
+  const wrap = document.getElementById('session-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < 5; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    if (i < state.sessionsDone) d.classList.add('done');
+    else if (i === state.sessionsDone) d.classList.add('current');
+    wrap.appendChild(d);
+  }
+  const m = Math.floor(state.cycleEarned / 60);
+  const s = state.cycleEarned % 60;
+  document.getElementById('cycle-earned-display').textContent = m + 'm ' + s + 's';
+}
+
+// ============================================================
+// QUIZ
+// ============================================================
+function startQuiz() {
+  state.answers = [];
+  state.currentQ = 0;
+  state.pickedQs = questions.map(cat => Math.floor(Math.random() * 10));
+  showScreen('quiz');
+  showQuestion();
+}
+
+function showQuestion() {
+  const i = state.currentQ;
+  document.getElementById('q-progress').textContent = 'Question ' + (i+1) + ' of 5';
+  document.getElementById('progress-bar').style.width = (i / 5 * 100) + '%';
+  document.getElementById('q-category').textContent = categories[i];
+  document.getElementById('q-text').textContent = questions[i][state.pickedQs[i]];
+  document.getElementById('q-num').textContent = 'Q' + (i+1) + ' of 5';
+}
+
+function answer(yes) {
+  state.answers.push(yes);
+  state.currentQ++;
+  if (state.currentQ < 5) {
+    showQuestion();
+  } else {
+    finishQuiz();
+  }
+}
+
+function finishQuiz() {
+  const score = state.answers.filter(Boolean).length;
+  let earned = 0, icon, title, sub;
+
+  if      (score === 5) { earned=120; icon='⭐'; title='PERFECT! 5/5';     sub='+2 minutes earned!'; }
+  else if (score === 4) { earned=90;  icon='🎉'; title='Great! 4/5';        sub='+1 min 30 sec earned!'; }
+  else if (score === 3) { earned=60;  icon='👍'; title='Good! 3/5';         sub='+1 minute earned!'; }
+  else if (score === 2) { earned=30;  icon='😐'; title='Hmm... 2/5';        sub='+30 seconds earned'; }
+  else if (score === 1) { earned=0;   icon='😬'; title='Only 1/5...';       sub='No time earned. Try harder!'; }
+  else                  { earned=0;   icon='🚨'; title='Lying detected!';   sub='No time earned!'; }
+
+  // Update stats
+  stats.totalSessions++;
+  stats.totalSecs += earned;
+  stats.totalScore += score;
+  if (score === 5) stats.perfectScores++;
+  if (score === 0) stats.caughtLying++;
+  saveStats();
+
+  state.cycleEarned += earned;
+  state.sessionsDone++;
+
+  // Score pills
+  const grid = document.getElementById('score-grid');
+  grid.innerHTML = '';
+  state.answers.forEach((a, i) => {
+    const p = document.createElement('div');
+    p.className = 'score-pill ' + (a ? 'yes' : 'no');
+    p.innerHTML = 'Q' + (i+1) + '<br>' + (a ? '✓' : '✗');
+    grid.appendChild(p);
+  });
+
+  document.getElementById('result-icon').textContent = icon;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-sub').textContent = sub;
+
+  const btn = document.getElementById('result-next-btn');
+  if (state.sessionsDone >= 5) {
+    btn.textContent = '🎮 Start Minecraft Time!';
+  } else {
+    btn.textContent = 'Continue (' + state.sessionsDone + '/5 done) ▶';
+  }
+
+  showScreen('result');
+  flashMsg(icon, title, sub);
+}
+
+function afterResult() {
+  if (state.sessionsDone >= 5) {
+    startCountdown();
+  } else {
+    showScreen('start');
+    renderDots();
+  }
+}
+
+// ============================================================
+// COUNTDOWN
+// ============================================================
+function startCountdown() {
+  let secs = state.cycleEarned;
+  showScreen('countdown');
+  updateCountdownDisplay(secs);
+
+  state.countdownInterval = setInterval(() => {
+    secs--;
+    updateCountdownDisplay(secs);
+    if (secs <= 0) {
+      clearInterval(state.countdownInterval);
+      endCountdown();
+    }
+  }, 1000);
+}
+
+function updateCountdownDisplay(secs) {
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  document.getElementById('countdown-time').textContent =
+    String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+
+function stopCountdown() {
+  if (confirm('Stop the timer early? Your remaining time will be lost.')) {
+    clearInterval(state.countdownInterval);
+    endCountdown();
+  }
+}
+
+function endCountdown() {
+  state.sessionsDone = 0;
+  state.cycleEarned = 0;
+  showScreen('start');
+  renderDots();
+  flashMsg('⏰', 'Time is up!', 'Stop playing and get back to work!');
+}
+
+// ============================================================
+// FREE TIMER
+// ============================================================
+function updateFreeTimer(val) {
+  document.getElementById('free-min-label').textContent = val;
+  const m = String(val).padStart(2,'0');
+  document.getElementById('free-timer-display').textContent = m + ':00';
+}
+
+function startFreeTimer() {
+  let secs = parseInt(document.getElementById('free-min-slider').value) * 60;
+  document.getElementById('timer-setup').style.display = 'none';
+  document.getElementById('timer-running').style.display = 'block';
+  updateFreeCountdown(secs);
+
+  state.freeTimerInterval = setInterval(() => {
+    secs--;
+    updateFreeCountdown(secs);
+    if (secs <= 0) {
+      clearInterval(state.freeTimerInterval);
+      stopFreeTimer();
+      flashMsg('⏰', 'Free timer done!', 'Time to get back to work!');
+    }
+  }, 1000);
+}
+
+function updateFreeCountdown(secs) {
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  document.getElementById('free-countdown-time').textContent =
+    String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+
+function stopFreeTimer() {
+  clearInterval(state.freeTimerInterval);
+  document.getElementById('timer-setup').style.display = 'block';
+  document.getElementById('timer-running').style.display = 'none';
+}
+
+// ============================================================
+// STATS
+// ============================================================
+function updateStatsDisplay() {
+  const m = Math.floor(stats.totalSecs / 60);
+  const s = stats.totalSecs % 60;
+  document.getElementById('stat-total-time').textContent = m + 'm ' + s + 's';
+  document.getElementById('stat-sessions').textContent = stats.totalSessions;
+  document.getElementById('stat-perfect').textContent = stats.perfectScores;
+  document.getElementById('stat-caught').textContent = stats.caughtLying;
+  const avg = stats.totalSessions > 0
+    ? (stats.totalScore / stats.totalSessions).toFixed(1) + ' / 5'
+    : '-';
+  document.getElementById('stat-avg').textContent = avg;
+}
+
+function confirmReset() {
+  if (confirm('Reset ALL stats? This cannot be undone!')) {
+    stats = { totalSecs:0, totalSessions:0, perfectScores:0, caughtLying:0, totalScore:0 };
+    saveStats();
+    updateStatsDisplay();
+    flashMsg('🗑', 'Stats Reset!', 'Everything cleared.');
+  }
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function showScreen(name) {
+  ['start','quiz','result','countdown'].forEach(s => {
+    document.getElementById('screen-' + s).style.display = s === name ? 'block' : 'none';
+  });
+}
+
+function flashMsg(icon, title, sub) {
+  const f = document.getElementById('flash');
+  document.getElementById('flash-icon').textContent = icon;
+  document.getElementById('flash-title').textContent = title;
+  document.getElementById('flash-sub').textContent = sub;
+  f.classList.add('show');
+  setTimeout(() => f.classList.remove('show'), 1800);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderDots();
+updateStatsDisplay();
+</script>
 </body>
 </html>

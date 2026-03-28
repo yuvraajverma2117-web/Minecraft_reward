@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minecraft Reward System</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0a0a0a;
+      color: #ffffff;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1a6b1a, #2d8f2d);
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.5em;
+      color: #ffffff;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+
+    header p {
+      margin-top: 12px;
+      font-size: 1.1em;
+      color: #c8ffc8;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #ffffff22;
+      border: 1px solid #ffffff44;
+      border-radius: 20px;
+      padding: 4px 14px;
+      margin: 6px 4px;
+      font-size: 0.85em;
+      color: #eeffee;
+    }
+
+    .badges { margin-top: 20px; }
+
+    nav {
+      background: #111;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    nav a {
+      color: #4cff4c;
+      text-decoration: none;
+      font-size: 0.95em;
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1px solid #2a5c2a;
+      transition: background 0.2s;
+    }
+
+    nav a:hover { background: #1a3a1a; }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    section { margin-bottom: 60px; }
+
+    h2 {
+      font-size: 1.6em;
+      color: #4cff4c;
+      border-left: 4px solid #4cff4c;
+      padding-left: 14px;
+      margin-bottom: 24px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .feature-card {
+      background: #111;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .feature-card .icon { font-size: 2em; margin-bottom: 10px; }
+    .feature-card h3 { color: #4cff4c; margin-bottom: 8px; font-size: 1em; }
+    .feature-card p { color: #aaa; font-size: 0.9em; line-height: 1.5; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th {
+      background: #1a3a1a;
+      color: #4cff4c;
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #1a1a1a;
+      color: #ccc;
+      font-size: 0.9em;
+    }
+
+    tr:hover td { background: #111; }
+
+    .lcd-preview {
+      background: #1a2e1a;
+      border: 3px solid #4a7c4a;
+      border-radius: 10px;
+      padding: 20px 24px;
+      font-family: monospace;
+      font-size: 1.1em;
+      color: #90ee90;
+      max-width: 340px;
+      margin: 10px auto;
+      text-align: center;
+      box-shadow: 0 0 20px #1a4a1a;
+    }
+
+    .lcd-row {
+      background: #2d5a2d;
+      border-radius: 4px;
+      padding: 8px 12px;
+      margin: 6px 0;
+      letter-spacing: 2px;
+    }
+
+    .step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .step-num {
+      background: #4cff4c;
+      color: #000;
+      font-weight: bold;
+      min-width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9em;
+      flex-shrink: 0;
+    }
+
+    .step-text h3 { color: #fff; margin-bottom: 4px; }
+    .step-text p  { color: #aaa; font-size: 0.9em; line-height: 1.5; }
+
+    code {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-family: monospace;
+      color: #4cff4c;
+      font-size: 0.9em;
+    }
+
+    .download-btn {
+      display: inline-block;
+      background: #2d8f2d;
+      color: #fff;
+      padding: 14px 32px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-size: 1.1em;
+      font-weight: bold;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+
+    .download-btn:hover { background: #3aaa3a; }
+
+    .version-list { list-style: none; }
+    .version-list li {
+      padding: 12px 0;
+      border-bottom: 1px solid #1a1a1a;
+      color: #ccc;
+      font-size: 0.95em;
+    }
+
+    .version-list li span {
+      color: #4cff4c;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: #444;
+      font-size: 0.85em;
+      border-top: 1px solid #1a1a1a;
+    }
+
+    footer a { color: #4cff4c; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div style="font-size:3em">🎮</div>
+  <h1>Minecraft Reward System</h1>
+  <p>An Arduino-powered homework accountability system</p>
+  <div class="badges">
+    <span class="badge">Arduino Uno</span>
+    <span class="badge">16x2 LCD</span>
+    <span class="badge">Joystick</span>
+    <span class="badge">EEPROM</span>
+    <span class="badge">v5.0</span>
+  </div>
+</header>
+
+<nav>
+  <a href="#features">Features</a>
+  <a href="#scoring">Scoring</a>
+  <a href="#lcd">LCD Preview</a>
+  <a href="#wiring">Wiring</a>
+  <a href="#setup">Setup</a>
+  <a href="#changelog">Changelog</a>
+  <a href="#download">Download</a>
+</nav>
+
+<div class="container">
+
+  <!-- FEATURES -->
+  <section id="features">
+    <h2>✨ Features</h2>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="icon">🎯</div>
+        <h3>Anti-Cheat Quiz</h3>
+        <p>50 questions across 5 categories. Arduino randomly picks 1 per category giving 100,000 possible combinations.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">💾</div>
+        <h3>Permanent Stats</h3>
+        <p>Stats saved to EEPROM. Survives power off. Hold button 3 seconds on Stats page to reset.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🕹</div>
+        <h3>Swipe Navigation</h3>
+        <p>Push joystick left or right to browse between Homework, Stats and Free Timer pages.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">⏱</div>
+        <h3>Free Timer</h3>
+        <p>Set any custom countdown from 1 to 60 minutes using the joystick. No quiz needed.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🔲</div>
+        <h3>Visual UI</h3>
+        <p>Bordered page selection, triangle navigation indicators and score feedback on the LCD.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">⚡</div>
+        <h3>5 Session System</h3>
+        <p>Complete 5 quiz sessions and all your earned time combines into one big Minecraft countdown!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCORING -->
+  <section id="scoring">
+    <h2>📊 Scoring System</h2>
+    <table>
+      <tr><th>Score</th><th>Time Earned</th><th>Message</th></tr>
+      <tr><td>⭐ 5 / 5</td><td>2 minutes</td><td>PERFECT! 100% honest!</td></tr>
+      <tr><td>4 / 5</td><td>1 min 30 sec</td><td>Great job! Almost perfect!</td></tr>
+      <tr><td>3 / 5</td><td>1 minute</td><td>Good effort! Keep it up!</td></tr>
+      <tr><td>2 / 5</td><td>30 seconds</td><td>Hmm... be more honest!</td></tr>
+      <tr><td>0 – 1 / 5</td><td>No time 😢</td><td>Lying detected!</td></tr>
+    </table>
+  </section>
+
+  <!-- LCD PREVIEW -->
+  <section id="lcd">
+    <h2>🖥 LCD Preview</h2>
+    <p style="color:#aaa;margin-bottom:16px">What you see on the screen:</p>
+
+    <p style="color:#888;text-align:center;margin-bottom:6px">Home screen</p>
+    <div class="lcd-preview">
+      <div class="lcd-row">[Homework       ]</div>
+      <div class="lcd-row">         >> OK  </div>
+    </div>
+
+    <p style="color:#888;text-align:center;margin:16px 0 6px">During quiz</p>
+    <div class="lcd-preview">
+      <div class="lcd-row">Q1: Did you start</div>
+      <div class="lcd-row">^^=Yes   vv=No  </div>
+    </div>
+
+    <p style="color:#888;text-align:center;margin:16px 0 6px">Countdown</p>
+    <div class="lcd-preview">
+      <div class="lcd-row">** MINECRAFT ** </div>
+      <div class="lcd-row">7m 42s remaining</div>
+    </div>
+  </section>
+
+  <!-- WIRING -->
+  <section id="wiring">
+    <h2>🔌 Wiring</h2>
+    <table>
+      <tr><th>Component</th><th>Pin</th><th>Arduino</th></tr>
+      <tr><td>LCD GND</td><td>GND</td><td>GND</td></tr>
+      <tr><td>LCD VCC</td><td>5V</td><td>5V</td></tr>
+      <tr><td>LCD SDA</td><td>Data</td><td>A4</td></tr>
+      <tr><td>LCD SCL</td><td>Clock</td><td>A5</td></tr>
+      <tr><td>Joystick GND</td><td>GND</td><td>GND</td></tr>
+      <tr><td>Joystick VCC</td><td>5V</td><td>5V</td></tr>
+      <tr><td>Joystick X</td><td>VRX</td><td>A0</td></tr>
+      <tr><td>Joystick Y</td><td>VRY</td><td>A1</td></tr>
+      <tr><td>Joystick Btn</td><td>SW</td><td>D2</td></tr>
+    </table>
+    <p style="color:#666;margin-top:12px;font-size:0.85em">💡 If LCD shows nothing: try changing 0x27 to 0x3F in the code</p>
+  </section>
+
+  <!-- SETUP -->
+  <section id="setup">
+    <h2>🚀 Setup Guide</h2>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-text">
+        <h3>Download the code</h3>
+        <p>Download <code>minecraft_reward_system.ino</code> from this repo</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-text">
+        <h3>Install library</h3>
+        <p>In Arduino IDE go to Library Manager and install <code>LiquidCrystal_I2C</code> by Frank de Brabander</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-text">
+        <h3>Wire it up</h3>
+        <p>Connect LCD and Joystick according to the wiring table above</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-text">
+        <h3>Upload</h3>
+        <p>Open the file in Arduino IDE or ArduinoDroid, select your board and upload!</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-text">
+        <h3>Play!</h3>
+        <p>Complete 5 homework quiz sessions to earn your Minecraft time 🎮</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHANGELOG -->
+  <section id="changelog">
+    <h2>📜 Changelog</h2>
+    <ul class="version-list">
+      <li><span>v5.0</span>EEPROM stats, visual bordered UI, triangle navigation, score feedback, splash screen</li>
+      <li><span>v4.0</span>Persistent stats with lifetime seconds and sessions counter</li>
+      <li><span>v3.0</span>Swipe navigation, Stats page, Free Timer page</li>
+      <li><span>v2.0</span>PROGMEM memory optimization for question storage</li>
+      <li><span>v1.0</span>Basic 5-question quiz with Minecraft countdown timer</li>
+    </ul>
+  </section>
+
+  <!-- DOWNLOAD -->
+  <section id="download" style="text-align:center">
+    <h2>⬇️ Download</h2>
+    <p style="color:#aaa;margin-bottom:20px">Get the latest version of the sketch</p>
+    <a class="download-btn" href="minecraft_reward_system/minecraft_reward_system.ino">
+      ⬇️ Download .ino file
+    </a>
+  </section>
+
+</div>
+
+<footer>
+  <p>Built with ❤️ for Arduino Uno + 16x2 LCD + Joystick</p>
+  <p style="margin-top:8px"><a href="https://github.com">View on GitHub</a></p>
+</footer>
+
+</body>
+</html>
